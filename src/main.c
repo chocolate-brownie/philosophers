@@ -6,25 +6,77 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/02/26 23:03:59 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/06 00:55:10 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static void	init_mutexes(t_data *data)
+void	start_simulation(t_data *data)
 {
-	create_mutex(data->mtx_death, INIT);
-	create_mutex(data->mtx_print, INIT);
-	create_mutex(data->mtx_meal, INIT);
-	create_mutex(data->mtx_forks, INIT);
+	unsigned int	i;
+
+	i = -1;
+	get_current_time(&data->simul_start);
+	printf(RED "\nsimulation starting at: %lu ms\n\n" RESET,
+		print_ms(data->simul_start));
+	while (++i < data->nbr_of_philo)
+	{
+		data->philos[i].last_meal = data->simul_start;
+		handle_threads(&data->philos[i].philo_thread, start_routine,
+			&data->philos[i], CREATE);
+	}
+	i = -1;
+	while (++i < data->nbr_of_philo)
+		handle_threads(&data->philos[i].philo_thread, NULL, NULL, JOIN);
 }
 
-static void	init_philo(t_data *data, int argc, char **argv)
+static void	init_philo(t_philo **philo_ptr, t_data *data)
 {
-	if (argc != 5 || argc != 6)
+	unsigned int	i;
+	t_philo			*philos;
+
+	i = -1;
+	*philo_ptr = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
+	philos = *philo_ptr;
+	while (++i < data->nbr_of_philo)
+	{
+		philos[i].data = data;
+		philos[i].philo_id = i + 1;
+		philos[i].meals_eaten = 0;
+		philos[i].fork_left = i;
+		philos[i].fork_right = (i + 1) % data->nbr_of_philo;
+		// last meal will be set when simulation starts
+		print_philo_data(&philos[i]);
+	}
+	data->philos = philos;
+}
+
+static void	init_mutexes(t_data *data)
+{
+	unsigned int	i;
+
+	printf(YELLOW "Creating mutexes...\n\n" RESET);
+	handle_mutexes(&data->mtx_death, INIT);
+	printf("mtx_death\tINIT\t" GREEN "success\n" RESET);
+	handle_mutexes(&data->mtx_print, INIT);
+	printf("mtx_print\tINIT\t" GREEN "success\n" RESET);
+	handle_mutexes(&data->mtx_meal, INIT);
+	printf("mtx_meal\tINIT\t" GREEN "success\n" RESET);
+	data->mtx_forks = safe_malloc(sizeof(pthread_mutex_t) * data->nbr_of_philo);
+	i = -1;
+	while (++i < data->nbr_of_philo)
+		handle_mutexes(&data->mtx_forks[i], INIT);
+	printf("mtx_forks %d\tINIT\t" GREEN "success\n\n" RESET, i);
+}
+
+static void	init_data(t_data *data, int argc, char **argv)
+{
+	if (argc != 5 && argc != 6)
 		error_exit(RED "Invalid argument count" RESET);
-	data->nbr_of_philo = atol(argv[1]);
+	data->nbr_of_philo = atol(argv[1]); // TODO: function ft_atol
+	if (data->nbr_of_philo > PHILO_MAX)
+		error_exit("Max number of philosophers has to be udner 200");
 	data->time_to_die = atol(argv[2]);
 	data->time_to_eat = atol(argv[3]);
 	data->time_to_sleep = atol(argv[4]);
@@ -32,18 +84,20 @@ static void	init_philo(t_data *data, int argc, char **argv)
 		data->must_eat_count = atol(argv[5]);
 	else
 		data->must_eat_count = 1;
-	// if (!gettimeofday(&data->simul_start, NULL))
-	//     error_exit(RED"gettimeofday failed at init_philo\n"RESET);
 	data->someone_dead = false;
+	print_validated_data(data);
 	init_mutexes(data);
-	// print_validated_data(data);
 }
 
 int	main(int argc, char **argv)
 {
-	t_philo	philo;
+	t_philo	*philos;
 	t_data	data;
 
-	init_philo(&data, argc, argv);
+	philos = NULL;
+	init_data(&data, argc, argv);
+	init_philo(&philos, &data);
+	start_simulation(&data);
+	// cleanup(&philo, &data); TODO: function
 	return (0);
 }

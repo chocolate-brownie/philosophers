@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/02/22 18:48:43 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/03/05 09:53:24 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I$(INC_DIR)
 
 # Source files
-SRC_FILES = main.c debug.c utils.c
+SRC_FILES = routine.c main.c debug.c utils1.c utils2.c pthread_utils.c 
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

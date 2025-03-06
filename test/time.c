@@ -27,9 +27,10 @@ int	main(void)
 	t_philo	philo;
 
 	gettimeofday(&philo.start_time, NULL);
-	while (1) {
+	while (1)
+	{
 		printf("%d\n", get_elapsed_time(philo.start_time));
-        usleep(200000);
-    }
+		usleep(200000);
+	}
 	return (0);
 }
