@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 22:58:16 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/04 20:31:45 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 03:10:03 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	handle_mutexes(pthread_mutex_t *mutex, t_opcode opcode)
 		error_exit("Wrong opcode");
 }
 
-void	handle_threads(pthread_t *thread, void *(*start_routine)(void *),
+void	handle_threads(pthread_t *thread, void *(*function_name)(void *),
 		void *arg, t_opcode opcode)
 {
 	int	status;

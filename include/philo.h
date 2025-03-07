@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/06 00:46:30 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 03:17:12 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,11 +78,12 @@ typedef struct s_philo
 	unsigned int philo_id;    // ok
 	unsigned int meals_eaten; // ok
 
-	struct timeval last_meal; // FIXME: =  simul start time
+	struct timeval last_meal; // NOTE: declared @eating
 	unsigned int	fork_left;
 	unsigned int	fork_right;
 
 	pthread_t philo_thread; // NOTE: first declaration @start_simulation
+	pthread_t death_check;  // NOTE: first declaration @start_simulation
 	t_status status;        // NOTE: first declaration @start_routine
 }					t_philo;
 
@@ -91,20 +92,24 @@ void				print_validated_data(t_data *data);
 void				error_exit(const char *error_msg);
 void				*safe_malloc(size_t size);
 uint32_t			get_elapsed_time(struct timeval start);
-uint64_t			print_ms(struct timeval ref);
-void				print_message(t_philo *philo, t_status status);
 struct timeval		get_current_time(struct timeval *time);
 int					ft_usleep(uint32_t milliseconds);
+
+/* debuggin stuff */
+uint64_t			print_ms(struct timeval ref);
+void				print_message(t_philo *philo, t_status status);
 
 /* other stuff */
 void				handle_mutexes(pthread_mutex_t *mutex, t_opcode opcode);
 void				handle_threads(pthread_t *thread,
-						void *(*start_routine)(void *), void *arg,
+						void *(*function_name)(void *), void *arg,
 						t_opcode opcode);
 void				print_philo_data(t_philo *philo);
 void				start_simulation(t_data *data);
 
 /* routine stuff */
 void				*start_routine(void *arg);
+bool				check_meals_complete(t_philo *philo);
+void				*death_checker(void *arg);
 
 #endif

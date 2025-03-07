@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/06 00:55:10 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 03:17:12 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,15 @@ void	start_simulation(t_data *data)
 	get_current_time(&data->simul_start);
 	printf(RED "\nsimulation starting at: %lu ms\n\n" RESET,
 		print_ms(data->simul_start));
+	// create threads and pass in the routine function to each philo
 	while (++i < data->nbr_of_philo)
 	{
 		data->philos[i].last_meal = data->simul_start;
 		handle_threads(&data->philos[i].philo_thread, start_routine,
 			&data->philos[i], CREATE);
 	}
+	handle_threads(&data->philos->death_check, death_checker, data, CREATE);
+	handle_threads(&data->philos->death_check, NULL, NULL, JOIN);
 	i = -1;
 	while (++i < data->nbr_of_philo)
 		handle_threads(&data->philos[i].philo_thread, NULL, NULL, JOIN);

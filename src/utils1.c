@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 08:09:18 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/06 00:11:44 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 00:11:17 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,19 +58,19 @@ void	print_message(t_philo *philo, t_status status)
 		return ;
 	handle_mutexes(&philo->data->mtx_print, LOCK);
 	if (status == THINKING)
-		printf("%d %d is thinking\n",
+		printf("%d %d is " YELLOW "thinking\n" RESET,
 			get_elapsed_time(philo->data->simul_start), philo->philo_id);
 	else if (status == EATING)
-		printf("%d %d is eating\n", get_elapsed_time(philo->data->simul_start),
+		printf("%d %d is " GREEN "eating\n" RESET, get_elapsed_time(philo->data->simul_start),
 			philo->philo_id);
 	else if (status == SLEEPING)
-		printf("%d %d is sleeping\n",
+		printf("%d %d is " CYAN "sleeping\n" RESET,
 			get_elapsed_time(philo->data->simul_start), philo->philo_id);
 	else if (status == FORK)
 		printf("%d %d has taken a fork\n",
 			get_elapsed_time(philo->data->simul_start), philo->philo_id);
 	else if (status == DIED)
-		printf("%d %d died\n", get_elapsed_time(philo->data->simul_start),
+		printf("%d %d " RED "died\n" RESET, get_elapsed_time(philo->data->simul_start),
 			philo->philo_id);
 	handle_mutexes(&philo->data->mtx_print, UNLOCK);
 }

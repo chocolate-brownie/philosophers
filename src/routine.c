@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:36:00 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/06 01:25:49 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/06 21:10:55 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,8 @@ static void	eating(t_philo *philo)
 	handle_mutexes(&data->mtx_meal, LOCK);
 	get_current_time(&philo->last_meal);
 	philo->meals_eaten++;
+    handle_mutexes(&data->mtx_meal, UNLOCK);
 	// print the message
-	handle_mutexes(&data->mtx_meal, UNLOCK);
 	print_message(philo, EATING);
 	ft_usleep(data->time_to_eat);
 	// unlock the forks from grabbing_forks
