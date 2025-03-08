@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 03:17:12 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 20:24:40 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,21 +83,24 @@ typedef struct s_philo
 	unsigned int	fork_right;
 
 	pthread_t philo_thread; // NOTE: first declaration @start_simulation
-	pthread_t death_check;  // NOTE: first declaration @start_simulation
 	t_status status;        // NOTE: first declaration @start_routine
 }					t_philo;
 
 /* utility stuff */
-void				print_validated_data(t_data *data);
 void				error_exit(const char *error_msg);
 void				*safe_malloc(size_t size);
 uint32_t			get_elapsed_time(struct timeval start);
 struct timeval		get_current_time(struct timeval *time);
 int					ft_usleep(uint32_t milliseconds);
+uint32_t			get_time_last_meal(t_data *data, unsigned int i);
 
 /* debuggin stuff */
-uint64_t			print_ms(struct timeval ref);
 void				print_message(t_philo *philo, t_status status);
+void				print_validated_data(t_data *data);
+void				print_box_message(const char *msg);
+void				print_final_state(t_data *data);
+uint64_t			print_relative_ms(struct timeval time,
+						struct timeval start);
 
 /* other stuff */
 void				handle_mutexes(pthread_mutex_t *mutex, t_opcode opcode);

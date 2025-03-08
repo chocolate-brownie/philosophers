@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 06:45:37 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/05 10:01:36 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 20:05:45 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 #define HORIZONTAL "═"
 #define VERTICAL "║"
 
-static void	print_box_message(const char *msg)
+void	print_box_message(const char *msg)
 {
 	int	i;
 
@@ -49,22 +49,39 @@ void	print_validated_data(t_data *data)
 	printf("Time to die: %u\n", data->time_to_die);
 	printf("Time to eat: %u\n", data->time_to_eat);
 	printf("Time to sleep: %u\n", data->time_to_sleep);
+	printf("Number of meals: %u\n", data->must_eat_count);
 	printf("\n");
+}
+
+uint64_t	print_relative_ms(struct timeval time, struct timeval start)
+{
+	uint64_t	time_ms;
+	uint64_t	start_ms;
+
+	time_ms = (time.tv_sec * (uint64_t)1000) + (time.tv_usec / 1000);
+	start_ms = (start.tv_sec * (uint64_t)1000) + (start.tv_usec / 1000);
+	return (time_ms - start_ms);
 }
 
 void	print_philo_data(t_philo *philo)
 {
-	uint64_t	ms;
-
-	ms = (philo->last_meal.tv_sec * 1000) + (philo->last_meal.tv_usec / 1000);
 	printf(CYAN "Philosopher %u initialized:" RESET "\n", philo->philo_id);
 	printf("  - Meals eaten: %u\n", philo->meals_eaten);
 	printf("  - Fork left: %u\n", philo->fork_left);
 	printf("  - Fork right: %u\n", philo->fork_right);
-	printf("  - Last meal timestamp: %lu ms\n\n", ms);
+	printf("  - Last meal at: %lu ms\n\n", print_relative_ms(philo->last_meal,
+			philo->data->simul_start));
 }
 
-uint64_t	print_ms(struct timeval ref)
+void	print_final_state(t_data *data)
 {
-	return ((ref.tv_sec * 1000) + (ref.tv_usec / 1000));
+	unsigned int	i;
+	struct timeval	simul_end_time;
+
+	get_current_time(&simul_end_time);
+	printf(RED "\nSimulation ended at: %lu ms\n\n" RESET,
+		print_relative_ms(simul_end_time, data->simul_start));
+	i = -1;
+	while (++i < data->nbr_of_philo)
+		print_philo_data(&data->philos[i]);
 }

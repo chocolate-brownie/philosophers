@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/26 22:58:16 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 03:10:03 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/07 03:43:24 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	handle_threads(pthread_t *thread, void *(*function_name)(void *),
 
 	if (opcode == CREATE)
 	{
-		status = pthread_create(thread, NULL, start_routine, arg);
+		status = pthread_create(thread, NULL, function_name, arg);
 		if (status != 0)
 			error_exit("Failed to create thread");
 	}

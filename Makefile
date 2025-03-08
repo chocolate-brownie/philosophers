@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/03/05 09:53:24 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/03/08 01:55:14 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -g -I$(INC_DIR)
 
 # Source files
-SRC_FILES = routine.c main.c debug.c utils1.c utils2.c pthread_utils.c 
+SRC_FILES = routine.c main.c debug.c utils1.c utils2.c pthread_utils.c \
+			monitor.c
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
@@ -58,17 +59,19 @@ clean:
 	@rm -rf $(OBJ_DIR)
 	@echo "$(GREEN)✨ Object files cleaned!$(NC)"
 
-fclean: clean
+fclean:
+	@$(MAKE) clean
 	@echo "$(PURPLE)🗑️  Removing executable...$(NC)"
-	@rm -rf $(NAME)
+	@rm -f $(NAME)
 	@echo "$(GREEN)🌟 All files cleaned!$(NC)"
 
-re: fclean
+re:
 	@echo "$(CYAN)🔄 Rebuilding project...$(NC)"
+	@$(MAKE) fclean
 	@$(MAKE) all
 	@echo "$(GREEN)✅ Project rebuilt successfully!$(NC)"
 
-.PHONY: all clean fclean re banner
+.PHONY: all clean fclean re help
 
 help:
 	@echo "$(CYAN)📚 Available commands:$(NC)"
