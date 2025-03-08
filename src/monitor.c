@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/07 20:23:05 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/08 01:58:50 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/08 04:13:20 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ void	*death_checker(void *arg)
 	t_data			*data;
 	unsigned int	i;
 
-	i = 0;
 	data = (t_data *)arg;
 	while (1)
 	{
