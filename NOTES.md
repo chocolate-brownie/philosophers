@@ -40,3 +40,24 @@ first try to implement the program without the sleeping state, just thinking and
     - switch to eating (current_state: thinking -> eating)
     - if only both forks availbale lock mutexes and eat (duration: time_to_eat) then unlock mutexes to put down the forks back on the table 
 
+
+
+# Debug flags
+gcc -g -Wall -Wextra -Werror
+
+# With sanitizers
+gcc -g -Wall -Wextra -Werror -fsanitize=address
+gcc -g -Wall -Wextra -Werror -fsanitize=thread
+
+# Basic memory check
+valgrind ./philo
+
+# Detailed memory check
+valgrind --leak-check=full --show-leak-kinds=all ./philo
+
+# With thread checking
+valgrind --tool=helgrind ./philo
+valgrind --tool=drd ./philo
+
+# Combined detailed options
+valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./philo

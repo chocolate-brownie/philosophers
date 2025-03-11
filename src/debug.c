@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 06:45:37 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 20:05:45 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/11 01:37:15 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,14 +63,15 @@ uint64_t	print_relative_ms(struct timeval time, struct timeval start)
 	return (time_ms - start_ms);
 }
 
-void	print_philo_data(t_philo *philo)
+void	print_philo_data(t_philo *philo, unsigned int i)
 {
-	printf(CYAN "Philosopher %u initialized:" RESET "\n", philo->philo_id);
-	printf("  - Meals eaten: %u\n", philo->meals_eaten);
-	printf("  - Fork left: %u\n", philo->fork_left);
-	printf("  - Fork right: %u\n", philo->fork_right);
-	printf("  - Last meal at: %lu ms\n\n", print_relative_ms(philo->last_meal,
+	printf(CYAN "Philo id: [%d]:" RESET "\n", philo->philo_id);
+	printf("Meals eaten: %u\n", philo->meals_eaten);
+	printf("Last meal at: %lu ms\n", print_relative_ms(philo->last_meal,
 			philo->data->simul_start));
+	printf("Left fork: [%d]\n", i);
+	printf("Right fork: [%d]\n", (i + 1) % philo->data->nbr_of_philo);
+	printf("\n");
 }
 
 void	print_final_state(t_data *data)
@@ -83,5 +84,5 @@ void	print_final_state(t_data *data)
 		print_relative_ms(simul_end_time, data->simul_start));
 	i = -1;
 	while (++i < data->nbr_of_philo)
-		print_philo_data(&data->philos[i]);
+		print_philo_data(&data->philos[i], i);
 }

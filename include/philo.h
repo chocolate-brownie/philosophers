@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 20:24:40 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/11 01:30:30 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,8 @@ typedef struct s_philo
 	unsigned int meals_eaten; // ok
 
 	struct timeval last_meal; // NOTE: declared @eating
-	unsigned int	fork_left;
-	unsigned int	fork_right;
+	pthread_mutex_t	*fork_left;
+	pthread_mutex_t	*fork_right;
 
 	pthread_t philo_thread; // NOTE: first declaration @start_simulation
 	t_status status;        // NOTE: first declaration @start_routine
@@ -101,13 +101,13 @@ void				print_box_message(const char *msg);
 void				print_final_state(t_data *data);
 uint64_t			print_relative_ms(struct timeval time,
 						struct timeval start);
+void				print_philo_data(t_philo *philo, unsigned int i);
 
 /* other stuff */
 void				handle_mutexes(pthread_mutex_t *mutex, t_opcode opcode);
 void				handle_threads(pthread_t *thread,
 						void *(*function_name)(void *), void *arg,
 						t_opcode opcode);
-void				print_philo_data(t_philo *philo);
 void				start_simulation(t_data *data);
 
 /* routine stuff */

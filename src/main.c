@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 20:09:23 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/11 02:45:48 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	start_simulation(t_data *data)
 {
 	unsigned int	i;
-	pthread_t		death_checker_thread;
 
 	i = -1;
 	get_current_time(&data->simul_start);
@@ -23,12 +22,11 @@ void	start_simulation(t_data *data)
 	printf("\n");
 	while (++i < data->nbr_of_philo)
 	{
-		data->philos[i].last_meal = data->simul_start;
+		// data->philos[i].last_meal = data->simul_start; FIXME:
 		handle_threads(&data->philos[i].philo_thread, start_routine,
 			&data->philos[i], CREATE);
+		ft_usleep(1000);
 	}
-	handle_threads(&death_checker_thread, death_checker, data, CREATE);
-	handle_threads(&death_checker_thread, NULL, NULL, JOIN);
 	i = -1;
 	while (++i < data->nbr_of_philo)
 		handle_threads(&data->philos[i].philo_thread, NULL, NULL, JOIN);
@@ -42,17 +40,16 @@ static void	init_philo(t_philo **philo_ptr, t_data *data)
 	i = -1;
 	*philo_ptr = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
 	philos = *philo_ptr;
+	data->philos = philos;
 	while (++i < data->nbr_of_philo)
 	{
 		philos[i].data = data;
 		philos[i].philo_id = i + 1;
 		philos[i].meals_eaten = 0;
-		philos[i].fork_left = i;
-		philos[i].fork_right = (i + 1) % data->nbr_of_philo;
-		// last meal will be set when simulation starts
-		print_philo_data(&philos[i]);
+		philos[i].fork_left = &data->mtx_forks[i];
+		philos[i].fork_right = &data->mtx_forks[(i + 1) % data->nbr_of_philo];
+		print_philo_data(&philos[i], i);
 	}
-	data->philos = philos;
 }
 
 static void	init_mutexes(t_data *data)
@@ -70,11 +67,11 @@ static void	init_mutexes(t_data *data)
 	i = -1;
 	while (++i < data->nbr_of_philo)
 		handle_mutexes(&data->mtx_forks[i], INIT);
-	printf("mtx_forks %d\tINIT\t" GREEN "success\n\n" RESET, i);
+	printf("mtx_forks (%d)\tINIT\t" GREEN "success\n\n" RESET, i);
 }
 
-// static long ft_atol(const char *str); TODO: control the parsing
-
+//  TODO: check for valid arguments inside the ft_atol function
+//  TODO: make sure you check for the PHILO_MAX 200
 static void	init_data(t_data *data, int argc, char **argv)
 {
 	if (argc != 5 && argc != 6)

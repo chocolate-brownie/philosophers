@@ -6,12 +6,15 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 09:53:33 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 20:23:43 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/10 18:33:39 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
+/**
+ * TODO: check whether they are dying during the system sleep
+ */
 int	ft_usleep(uint32_t milliseconds)
 {
 	struct timeval	start;
