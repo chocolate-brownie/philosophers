@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 08:09:18 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/07 20:20:50 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/12 05:10:58 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,6 @@ void	print_message(t_philo *philo, t_status status)
 	bool		is_dead;
 	uint32_t	timestamp;
 
-	handle_mutexes(&philo->data->mtx_death, LOCK);
-	is_dead = philo->data->someone_dead;
-	handle_mutexes(&philo->data->mtx_death, UNLOCK);
-	if (is_dead && status != DIED)
-		return ;
 	timestamp = get_elapsed_time(philo->data->simul_start);
 	handle_mutexes(&philo->data->mtx_print, LOCK);
 	if (status == THINKING)

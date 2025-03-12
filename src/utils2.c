@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 09:53:33 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/10 18:33:39 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:52:34 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,44 @@ bool	check_meals_complete(t_philo *philo)
 	return (philo->meals_eaten >= philo->data->must_eat_count);
 }
 
-uint32_t	get_time_last_meal(t_data *data, unsigned int i)
+void	cleanup(t_philo **philos, t_data *data)
 {
-	uint32_t	time_since_meal;
+	unsigned int	i;
 
-	handle_mutexes(&data->mtx_meal, LOCK);
-	time_since_meal = get_elapsed_time(data->philos[i].last_meal);
-	handle_mutexes(&data->mtx_meal, UNLOCK);
-	return (time_since_meal);
+	printf(RED "\nCleaning up resources...\n\n" RESET);
+	i = 0;
+	while (i < data->nbr_of_philo)
+	{
+		handle_mutexes(&data->mtx_forks[i], DESTROY);
+		printf("mtx_fork[%d]\tDESTROY\t" GREEN "success\n" RESET, i);
+		i++;
+	}
+	handle_mutexes(&data->mtx_death, DESTROY);
+	printf("mtx_death\tDESTROY\t" GREEN "success\n" RESET);
+	handle_mutexes(&data->mtx_print, DESTROY);
+	printf("mtx_print\tDESTROY\t" GREEN "success\n" RESET);
+	handle_mutexes(&data->mtx_meal, DESTROY);
+	printf("mtx_meal\tDESTROY\t" GREEN "success\n" RESET);
+	if (data->mtx_forks)
+	{
+		free(data->mtx_forks);
+		printf("mtx_forks\tFREE\t" GREEN "success\n" RESET);
+	}
+	if (*philos)
+	{
+		free(*philos);
+		*philos = NULL;
+		printf("philos\t\tFREE\t" GREEN "success\n" RESET);
+	}
+	printf(GREEN "\nCleanup complete!\n\n" RESET);
+}
+
+void	*ft_memset(void *s, int c, size_t n)
+{
+	unsigned char	*ptr;
+
+	ptr = s;
+	while (n--)
+		*ptr++ = (unsigned char)c;
+	return (s);
 }

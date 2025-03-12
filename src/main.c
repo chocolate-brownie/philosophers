@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/11 02:45:48 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/12 04:38:58 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,12 +21,9 @@ void	start_simulation(t_data *data)
 	print_box_message("     Simulation    ");
 	printf("\n");
 	while (++i < data->nbr_of_philo)
-	{
-		// data->philos[i].last_meal = data->simul_start; FIXME:
 		handle_threads(&data->philos[i].philo_thread, start_routine,
 			&data->philos[i], CREATE);
-		ft_usleep(1000);
-	}
+	// TODO: create a monitoring thread
 	i = -1;
 	while (++i < data->nbr_of_philo)
 		handle_threads(&data->philos[i].philo_thread, NULL, NULL, JOIN);
@@ -38,11 +35,13 @@ static void	init_philo(t_philo **philo_ptr, t_data *data)
 	t_philo			*philos;
 
 	i = -1;
+	// FIXME: free the malloc
 	*philo_ptr = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
 	philos = *philo_ptr;
 	data->philos = philos;
 	while (++i < data->nbr_of_philo)
 	{
+		ft_memset(&philos[i].last_meal, 0, sizeof(struct timeval));
 		philos[i].data = data;
 		philos[i].philo_id = i + 1;
 		philos[i].meals_eaten = 0;
@@ -78,7 +77,7 @@ static void	init_data(t_data *data, int argc, char **argv)
 		error_exit(RED "Invalid argument count" RESET);
 	data->nbr_of_philo = atol(argv[1]);
 	if (data->nbr_of_philo > PHILO_MAX)
-		error_exit("Max number of philosophers has to be udner 200");
+		error_exit("Max number of philosophers has to be under 200");
 	data->time_to_die = atol(argv[2]);
 	data->time_to_eat = atol(argv[3]);
 	data->time_to_sleep = atol(argv[4]);
@@ -87,6 +86,7 @@ static void	init_data(t_data *data, int argc, char **argv)
 	else
 		data->must_eat_count = 0;
 	data->someone_dead = false;
+	ft_memset(&data->simul_start, 0, sizeof(struct timeval));
 	print_validated_data(data);
 	init_mutexes(data);
 }
@@ -100,7 +100,7 @@ int	main(int argc, char **argv)
 	init_data(&data, argc, argv);
 	init_philo(&philos, &data);
 	start_simulation(&data);
-	// cleanup(&philo, &data); TODO: function
-	print_final_state(&data);
+	cleanup(&philos, &data);
+	// print_final_state(&data);
 	return (0);
 }

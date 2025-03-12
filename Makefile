@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/03/11 02:56:06 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/03/11 03:03:17 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -138,7 +138,7 @@ help:
 	@echo "$(WHITE)make clean  	$(BLUE)→$(NC) Remove object files"
 	@echo "$(WHITE)make fclean 	$(BLUE)→$(NC) Remove object files and executable"
 	@echo "$(WHITE)make re     	$(BLUE)→$(NC) Rebuild the project"
-	@echo "$(WHITE)make help    $(BLUE)→$(NC) Show this help message"
+	@echo "$(WHITE)make help    	$(BLUE)→$(NC) Show this help message"
 
 .PHONY: all debug tsan asan valgrind helgrind drd clean fclean re \
 		test test_all help
