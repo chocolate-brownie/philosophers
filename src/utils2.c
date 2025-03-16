@@ -6,16 +6,38 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/05 09:53:33 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/12 04:52:34 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/14 12:08:29 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-/**
- * TODO: check whether they are dying during the system sleep
- */
-int	ft_usleep(uint32_t milliseconds)
+bool	check_death(t_philo *philo)
+{
+	bool		is_dead;
+	uint32_t	time_since_last_meal;
+
+	is_dead = false;
+	handle_mutexes(&philo->data->mtx_death, LOCK);
+	if (philo->data->someone_dead == true)
+	{
+		handle_mutexes(&philo->data->mtx_death, UNLOCK);
+		return (true);
+	}
+	handle_mutexes(&philo->data->mtx_meal, LOCK);
+	time_since_last_meal = get_elapsed_time(philo->last_meal);
+	if (time_since_last_meal >= philo->data->time_to_die)
+	{
+		philo->data->someone_dead = true;
+		print_message(philo, DIED);
+		is_dead = true;
+	}
+	handle_mutexes(&philo->data->mtx_meal, UNLOCK);
+	handle_mutexes(&philo->data->mtx_death, UNLOCK);
+	return (is_dead);
+}
+
+int	ft_usleep(uint32_t milliseconds, t_philo *philo)
 {
 	struct timeval	start;
 	uint32_t		elapsed;
@@ -23,6 +45,8 @@ int	ft_usleep(uint32_t milliseconds)
 	get_current_time(&start);
 	while (1)
 	{
+		if (check_death(philo))
+			return (1);
 		elapsed = get_elapsed_time(start);
 		if (elapsed >= milliseconds)
 			break ;
@@ -42,32 +66,22 @@ void	cleanup(t_philo **philos, t_data *data)
 {
 	unsigned int	i;
 
-	printf(RED "\nCleaning up resources...\n\n" RESET);
 	i = 0;
 	while (i < data->nbr_of_philo)
 	{
 		handle_mutexes(&data->mtx_forks[i], DESTROY);
-		printf("mtx_fork[%d]\tDESTROY\t" GREEN "success\n" RESET, i);
 		i++;
 	}
 	handle_mutexes(&data->mtx_death, DESTROY);
-	printf("mtx_death\tDESTROY\t" GREEN "success\n" RESET);
 	handle_mutexes(&data->mtx_print, DESTROY);
-	printf("mtx_print\tDESTROY\t" GREEN "success\n" RESET);
 	handle_mutexes(&data->mtx_meal, DESTROY);
-	printf("mtx_meal\tDESTROY\t" GREEN "success\n" RESET);
 	if (data->mtx_forks)
-	{
 		free(data->mtx_forks);
-		printf("mtx_forks\tFREE\t" GREEN "success\n" RESET);
-	}
 	if (*philos)
 	{
 		free(*philos);
 		*philos = NULL;
-		printf("philos\t\tFREE\t" GREEN "success\n" RESET);
 	}
-	printf(GREEN "\nCleanup complete!\n\n" RESET);
 }
 
 void	*ft_memset(void *s, int c, size_t n)

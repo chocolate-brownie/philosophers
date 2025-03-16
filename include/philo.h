@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/12 05:10:58 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/16 03:25:36 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,12 +91,11 @@ void			error_exit(const char *error_msg);
 void			*safe_malloc(size_t size);
 uint32_t		get_elapsed_time(struct timeval start);
 struct timeval	get_current_time(struct timeval *time);
-int				ft_usleep(uint32_t milliseconds);
+int				ft_usleep(uint32_t milliseconds, t_philo *philo);
 void			cleanup(t_philo **philos, t_data *data);
 void			*ft_memset(void *s, int c, size_t n);
 
 /* debuggin stuff */
-void			print_message(t_philo *philo, t_status status);
 void			print_validated_data(t_data *data);
 void			print_box_message(const char *msg);
 void			print_final_state(t_data *data);
@@ -110,8 +109,10 @@ void			handle_threads(pthread_t *thread,
 void			start_simulation(t_data *data);
 
 /* routine stuff */
+void			print_message(t_philo *philo, t_status status);
 void			*start_routine(void *arg);
 bool			check_meals_complete(t_philo *philo);
-void			*death_checker(void *arg);
-
+bool			check_death(t_philo *philo);
+void			handle_one_philo(t_philo *philo);
+void			grabbing_forks(t_philo *philo, t_opcode opcode);
 #endif

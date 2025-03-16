@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 08:09:18 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/12 05:10:58 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/16 03:30:09 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ uint32_t	get_elapsed_time(struct timeval start)
 
 void	print_message(t_philo *philo, t_status status)
 {
-	bool		is_dead;
 	uint32_t	timestamp;
 
 	timestamp = get_elapsed_time(philo->data->simul_start);
@@ -69,5 +68,7 @@ void	print_message(t_philo *philo, t_status status)
 		printf("%u %d has taken a fork\n", timestamp, philo->philo_id);
 	else if (status == DIED)
 		printf("%u %d " RED "died\n" RESET, timestamp, philo->philo_id);
+	else
+		error_exit("Invalid philosoper status");
 	handle_mutexes(&philo->data->mtx_print, UNLOCK);
 }

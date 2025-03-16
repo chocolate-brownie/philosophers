@@ -6,69 +6,78 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/11 02:29:02 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/12 05:27:48 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/16 03:28:35 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static void	grabbing_forks(t_philo *philo, t_opcode opcode)
-{
-	// HACK: print message function is locking the mtx_print
-	if (philo->philo_id % 2 == 0)
-	{
-		handle_mutexes(philo->fork_left, opcode);
-		print_message(philo, FORK);
-		handle_mutexes(philo->fork_right, opcode);
-		print_message(philo, FORK);
-	}
-	else
-	{
-		handle_mutexes(philo->fork_right, opcode);
-		print_message(philo, FORK);
-		handle_mutexes(philo->fork_left, opcode);
-		print_message(philo, FORK);
-	}
-}
-
 static void	eating(t_philo *philo)
 {
-	// grabbing forks
 	grabbing_forks(philo, LOCK);
-	// updating the last meal time
 	handle_mutexes(&philo->data->mtx_meal, LOCK);
-	get_current_time(&philo->data->philos->last_meal);
+	get_current_time(&philo->last_meal);
 	handle_mutexes(&philo->data->mtx_meal, UNLOCK);
-	// lock mutexes and print the eating
 	print_message(philo, EATING);
 	philo->meals_eaten++;
-	// release forks
+	ft_usleep(philo->data->time_to_eat, philo);
 	grabbing_forks(philo, UNLOCK);
+	philo->status = SLEEPING;
 }
 
 static void	sleeping(t_philo *philo)
 {
-	return ;
+	if (philo->status == SLEEPING)
+	{
+		print_message(philo, SLEEPING);
+		ft_usleep(philo->data->time_to_sleep, philo);
+	}
+	philo->status = THINKING;
 }
 
 static void	thinking(t_philo *philo)
 {
-	return ;
+	if (philo->status == THINKING)
+	{
+		print_message(philo, THINKING);
+		ft_usleep(500, philo);
+	}
+	philo->status = EATING;
 }
 
-void	*start_routine(t_philo *arg)
+static void	execute_philo_cycle(t_philo *philo)
+{
+	if (philo->status == EATING)
+	{
+		eating(philo);
+		return ;
+	}
+	if (philo->status == SLEEPING)
+	{
+		sleeping(philo);
+		return ;
+	}
+	if (philo->status == THINKING)
+	{
+		thinking(philo);
+		return ;
+	}
+}
+
+void	*start_routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	printf("\n\nsomeone_dead: %s%s%s\n\n",
-		philo->data->someone_dead ? RED : GREEN,
-		philo->data->someone_dead ? "true" : "false", RESET);
-	while (1)
+	get_current_time(&philo->last_meal);
+	if (philo->data->nbr_of_philo == 1)
 	{
-		eating(philo);
-		/*sleeping(data);*/
-		/*thinking(data);*/
+		handle_one_philo(philo);
+		return (NULL);
 	}
+	if (philo->philo_id % 2 == 0)
+		ft_usleep(philo->data->time_to_eat / 2, philo);
+	while (!check_death(philo) && !check_meals_complete(philo))
+		execute_philo_cycle(philo);
 	return (NULL);
 }

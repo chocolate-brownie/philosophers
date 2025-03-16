@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/12 19:08:27 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/15 11:18:03 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ static void	init_philo(t_philo **philo_ptr, t_data *data)
 		philos[i].meals_eaten = 0;
 		philos[i].fork_left = &data->mtx_forks[i];
 		philos[i].fork_right = &data->mtx_forks[(i + 1) % data->nbr_of_philo];
+		philos[i].status = EATING;
 		print_philo_data(&philos[i], i);
 	}
 }
