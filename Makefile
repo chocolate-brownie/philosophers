@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/03/16 03:05:28 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/03/21 15:47:46 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ NC = \033[0m # No Color
 
 # Program name and arguments for testing
 NAME = philo
-TEST_ARGS = 4 410 200 200
+TEST_ARGS = 3 800 300 120 2
 
 # Directory paths and header
 SRC_DIR = src
@@ -35,7 +35,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR)
 
 # Debug flags
-DEBUG = -g
+DEBUG = -g -pthread
 TSAN = -fsanitize=thread
 ASAN = -fsanitize=address
 
@@ -45,8 +45,7 @@ HELGRIND_FLAGS = --tool=helgrind
 DRD_FLAGS = --tool=drd
 
 # Source files
-SRC_FILES = routine.c main.c debug.c utils1.c utils2.c pthread_utils.c \
-			monitor.c routine_utils.c
+SRC_FILES = main.c debug.c utils1.c time_utils.c pthread_utils.c routines.c\
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
@@ -55,21 +54,21 @@ OBJS = $(addprefix $(OBJ_DIR)/, $(OBJ_FILES))
 # Rules
 all: $(NAME)
 
-# Debug build with symbols
-debug: CFLAGS += $(DEBUG)
+# Debug build with symbols and DEBUG flag enabled
+debug: CFLAGS += $(DEBUG) -DDEBUG
 debug: clean $(NAME)
-	@echo "$(GREEN)✅ Built with debug symbols$(NC)"
+	@echo "$(GREEN)✅ Built with debug symbols and DEBUG flag enabled$(NC)"
 
-# Thread sanitizer build
-tsan: CFLAGS += $(DEBUG) $(TSAN)
+# Thread sanitizer build with DEBUG flag
+tsan: CFLAGS += $(DEBUG) $(TSAN) -DDEBUG
 tsan: clean $(NAME)
-	@echo "$(GREEN)✅ Built with thread sanitizer$(NC)"
+	@echo "$(GREEN)✅ Built with thread sanitizer and DEBUG flag enabled$(NC)"
 	@echo "$(YELLOW)🚀 Run with: ./$(NAME) $(TEST_ARGS)$(NC)"
 
-# Address sanitizer build
-asan: CFLAGS += $(DEBUG) $(ASAN)
+# Address sanitizer build with DEBUG flag
+asan: CFLAGS += $(DEBUG) $(ASAN) -DDEBUG
 asan: clean $(NAME)
-	@echo "$(GREEN)✅ Built with address sanitizer$(NC)"
+	@echo "$(GREEN)✅ Built with address sanitizer and DEBUG flag enabled$(NC)"
 	@echo "$(YELLOW)🚀 Run with: ./$(NAME) $(TEST_ARGS)$(NC)"
 
 # Valgrind memory check
@@ -126,10 +125,10 @@ test_all: test tsan asan valgrind helgrind drd
 # Show help
 help:
 	@echo "$(CYAN)📚 Available commands:$(NC)"
-	@echo "$(WHITE)make        	$(BLUE)→$(NC) Build the project"
-	@echo "$(WHITE)make debug  	$(BLUE)→$(NC) Build with debug symbols"
-	@echo "$(WHITE)make tsan   	$(BLUE)→$(NC) Build with thread sanitizer"
-	@echo "$(WHITE)make asan   	$(BLUE)→$(NC) Build with address sanitizer"
+	@echo "$(WHITE)make        	$(BLUE)→$(NC) Build the project (no debug output)"
+	@echo "$(WHITE)make debug  	$(BLUE)→$(NC) Build with debug symbols and DEBUG output"
+	@echo "$(WHITE)make tsan   	$(BLUE)→$(NC) Build with thread sanitizer and DEBUG output"
+	@echo "$(WHITE)make asan   	$(BLUE)→$(NC) Build with address sanitizer and DEBUG output"
 	@echo "$(WHITE)make valgrind	$(BLUE)→$(NC) Run with valgrind memory checker"
 	@echo "$(WHITE)make helgrind	$(BLUE)→$(NC) Run with helgrind thread checker"
 	@echo "$(WHITE)make drd    	$(BLUE)→$(NC) Run with DRD thread checker"
@@ -142,4 +141,3 @@ help:
 
 .PHONY: all debug tsan asan valgrind helgrind drd clean fclean re \
 		test test_all help
-

@@ -6,102 +6,125 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/15 11:18:03 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/21 15:14:18 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	start_simulation(t_data *data)
+static void	init_philo(t_philo *philo, unsigned int i, t_data *data)
 {
-	unsigned int	i;
-
-	i = -1;
-	get_current_time(&data->simul_start);
-	print_box_message("     Simulation    ");
-	printf("\n");
-	while (++i < data->nbr_of_philo)
-		handle_threads(&data->philos[i].philo_thread, start_routine,
-			&data->philos[i], CREATE);
-	// TODO: create a monitoring thread
-	i = -1;
-	while (++i < data->nbr_of_philo)
-		handle_threads(&data->philos[i].philo_thread, NULL, NULL, JOIN);
+	DEBUG_PRINT("----------------------------\n");
+	philo->philo_id = i + 1;
+	DEBUG_PRINT_PURPLE("philo_id: %u\n", philo->philo_id);
+	philo->status = EATING;
+	DEBUG_PRINT_PURPLE("philo_status: %d\n", philo->status);
+	philo->meals_eaten = 0;
+	DEBUG_PRINT_PURPLE("philo_meals_eaten: %u\n", philo->meals_eaten);
+	philo->is_full = false;
+	DEBUG_PRINT_PURPLE("philo_is_full: %s\n",
+		philo->is_full ? "true" : "false");
+	philo->data = data;
+	handle_mutexes(data->mtx_meal, LOCK);
+	data->last_meal[i] = data->simul_start;
+	DEBUG_PRINT_PURPLE("Philo #%u - Last meal set to: %ld.%06ld seconds\n",
+		philo->philo_id, data->last_meal[i].tv_sec, data->last_meal[i].tv_usec);
+	handle_mutexes(data->mtx_meal, UNLOCK);
+	DEBUG_PRINT("----------------------------\n");
 }
 
-static void	init_philo(t_philo **philo_ptr, t_data *data)
+static int	create_threads(t_data *data, pthread_t *thread)
 {
 	unsigned int	i;
 	t_philo			*philos;
 
 	i = -1;
-	// FIXME: free the malloc
-	*philo_ptr = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
-	philos = *philo_ptr;
-	data->philos = philos;
+	philos = malloc(data->nbr_of_philo * sizeof(t_philo));
+	if (!philos)
+		return (1);
 	while (++i < data->nbr_of_philo)
 	{
-		ft_memset(&philos[i].last_meal, 0, sizeof(struct timeval));
-		philos[i].data = data;
-		philos[i].philo_id = i + 1;
-		philos[i].meals_eaten = 0;
-		philos[i].fork_left = &data->mtx_forks[i];
-		philos[i].fork_right = &data->mtx_forks[(i + 1) % data->nbr_of_philo];
-		philos[i].status = EATING;
-		print_philo_data(&philos[i], i);
+		init_philo(&philos[i], i, data);
+		handle_threads(&thread[i], &philo_routine, &philos[i], CREATE);
 	}
+	// handle_threads(&thread[i], &monitor_routine, data, CREATE);
+	return (0);
 }
 
-static void	init_mutexes(t_data *data)
+static void	create_mutexes(t_data *data, pthread_mutex_t *mtx_forks,
+		pthread_mutex_t control_mtx[4])
 {
 	unsigned int	i;
 
-	printf(YELLOW "Creating mutexes...\n\n" RESET);
-	handle_mutexes(&data->mtx_death, INIT);
-	printf("mtx_death\tINIT\t" GREEN "success\n" RESET);
-	handle_mutexes(&data->mtx_print, INIT);
-	printf("mtx_print\tINIT\t" GREEN "success\n" RESET);
-	handle_mutexes(&data->mtx_meal, INIT);
-	printf("mtx_meal\tINIT\t" GREEN "success\n" RESET);
-	data->mtx_forks = safe_malloc(sizeof(pthread_mutex_t) * data->nbr_of_philo);
+	i = -1;
+	while (++i < 4)
+		handle_mutexes(&control_mtx[i], INIT);
 	i = -1;
 	while (++i < data->nbr_of_philo)
-		handle_mutexes(&data->mtx_forks[i], INIT);
-	printf("mtx_forks (%d)\tINIT\t" GREEN "success\n\n" RESET, i);
+		handle_mutexes(&mtx_forks[i], INIT);
+	data->mtx_forks = mtx_forks;
+	data->mtx_full = &control_mtx[0];
+	data->mtx_meal = &control_mtx[1];
+	data->mtx_print = &control_mtx[2];
+	data->mtx_death = &control_mtx[3];
+	DEBUG_PRINT_GREEN("Success create_mutexes function\n");
 }
 
-//  TODO: check for valid arguments inside the ft_atol function
-//  TODO: make sure you check for the PHILO_MAX 200
 static void	init_data(t_data *data, int argc, char **argv)
 {
-	if (argc != 5 && argc != 6)
-		error_exit(RED "Invalid argument count" RESET);
 	data->nbr_of_philo = atol(argv[1]);
 	if (data->nbr_of_philo > PHILO_MAX)
 		error_exit("Max number of philosophers has to be under 200");
 	data->time_to_die = atol(argv[2]);
 	data->time_to_eat = atol(argv[3]);
 	data->time_to_sleep = atol(argv[4]);
-	if (argv[5])
+	data->time_to_think = 0;
+	if (data->time_to_sleep <= data->time_to_eat)
+		data->time_to_think = 2 * data->time_to_eat - data->time_to_sleep;
+	data->must_eat_count = 0;
+	if (argc == 6)
 		data->must_eat_count = atol(argv[5]);
-	else
-		data->must_eat_count = 0;
+	get_current_time(&data->simul_start);
 	data->someone_dead = false;
-	ft_memset(&data->simul_start, 0, sizeof(struct timeval));
+	data->fulled_phils = 0;
+	data->last_meal = malloc(data->nbr_of_philo * sizeof(struct timeval));
+	if (!data->last_meal) // WARNING: free me
+		error_exit("Malloc failed: last_meal @init_data");
+	data->mtx_death = NULL;
+	data->mtx_print = NULL;
+	data->mtx_meal = NULL;
+	data->mtx_forks = NULL;
+	data->mtx_full = NULL;
 	print_validated_data(data);
-	init_mutexes(data);
+	DEBUG_PRINT_GREEN("Success init_data function\n");
 }
 
 int	main(int argc, char **argv)
 {
-	t_philo	*philos;
-	t_data	data;
+	t_data			data;
+	pthread_t		*philo_threads;
+	pthread_mutex_t	*mtx_forks;
+	pthread_mutex_t	control_mutexes[4];
 
-	philos = NULL;
+	check_input(argc, argv);
 	init_data(&data, argc, argv);
-	init_philo(&philos, &data);
-	start_simulation(&data);
-	cleanup(&philos, &data);
-	// print_final_state(&data);
+	// WARNING: free me
+	philo_threads = malloc(data.nbr_of_philo * sizeof(pthread_t));
+	if (!philo_threads)
+		return (free(data.last_meal), 1);
+	DEBUG_PRINT_GREEN("Success mallocing philo_threads\n");
+	// WARNING: free me
+	mtx_forks = malloc(data.nbr_of_philo * sizeof(pthread_mutex_t));
+	if (!mtx_forks)
+		return (free(data.last_meal), 1);
+	DEBUG_PRINT_GREEN("Success mallocing forks\n");
+	create_mutexes(&data, mtx_forks, control_mutexes);
+	if (create_threads(&data, philo_threads) != 0)
+		philo_mark_dead(&data);
+	// NOTE: freeing stuff
+	free(philo_threads);
+	free(data.last_meal);
+	free(mtx_forks);
+	// create_threads(&data, philo_threads);
 	return (0);
 }
