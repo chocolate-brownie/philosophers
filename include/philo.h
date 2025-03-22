@@ -6,10 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/21 20:06:45 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/22 11:55:05 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#ifndef PHILO_H
+
+# ifndef PHILO_H
 # define PHILO_H
 
 # include <errno.h>
@@ -123,6 +124,8 @@ void				print_message(t_philo *philo, t_status status);
 
 /** fork grabbing mecha */
 bool	grabbing_forks(t_philo *philo);
+void	get_fork_indices(t_philo *philo, unsigned int *left_fork,
+		unsigned int *right_fork);
 
 
 /** time utility functions */
