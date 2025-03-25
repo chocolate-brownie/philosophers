@@ -6,33 +6,65 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 15:09:08 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/25 18:00:10 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static bool	control_args(int argc)
+static void	parsing_input(t_global *data, int argc, char **argv)
 {
-	if (argc > 6 || argc < 5)
+	if (!control_args(argc))
+		error_exit("Wrong argument count");
+	else
 	{
-		printf("The program should be executed as follows:\n");
-		printf("./philo number_of_philosophers time_to_die time_to_eat ");
-		printf("time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
-		return (false);
+		data->nbr_of_philo = ft_atol(argv[1]);
+		if (data->nbr_of_philo > PHILO_MAX)
+			error_exit("Number of philosophers should be less than 200");
+		data->time_to_die = ft_atol(argv[2]) * 1e3;
+		data->time_to_eat = ft_atol(argv[3]) * 1e3;
+		data->time_to_sleep = ft_atol(argv[4]) * 1e3;
+		if (data->time_to_die < 6e4 || data->time_to_eat < 6e4
+			|| data->time_to_sleep < 6e4)
+			error_exit("Timestamps should be major than 60ms");
+		if (argv[5])
+			data->must_eat_count = ft_atol(argv[5]);
+		else
+			data->must_eat_count = -1;
 	}
-	return (true);
+}
+
+/**WARNING: this function causes potential memory leaks
+ * if you create a clean_up function this could cause double free errors
+ * */
+static void	init_data(t_global *data)
+{
+	unsigned int	i;
+	int				mtx_result;
+
+	memset(&data->start_simul, 0, sizeof(struct timeval));
+	data->end_simul = false;
+	data->forks = safe_malloc(sizeof(t_fork) * data->nbr_of_philo);
+	data->philos = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
+	i = -1;
+	while (++i < data->nbr_of_philo)
+	{
+		mtx_result = pthread_mutex_init(data->forks[i].mtx_fork, NULL);
+		if (mtx_result != 0)
+		{
+			free(data->forks);
+			free(data->philos);
+			error_exit("initiating mutexes");
+		}
+		data->forks[i].fork_id = i;
+	}
 }
 
 int	main(int argc, char *argv[])
 {
 	t_global	data;
 
-	(void)data;
-	(void)argv;
-	if (!control_args(argc))
-		error_exit("Wrong argument count");
-	// parsing_input(&data, argc, argv);
-	/* init_data(&data);
-	start_simulation(&data); */
+	parsing_input(&data, argc, argv);
+	init_data(&data);
+	// start_simulation(&data);
 }

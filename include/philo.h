@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 13:01:24 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/25 17:53:30 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include <stdint.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <sys/time.h>
-# include <unistd.h>
+# include <string.h>
+# include <sys/time.h> # include <unistd.h>
 
 # define RED "\x1b[38;2;255;179;186m"
 # define GREEN "\x1b[38;2;186;255;201m"
@@ -52,7 +52,7 @@ typedef enum e_status
 
 typedef struct s_fork
 {
-	pthread_mutex_t		*forks;
+	pthread_mutex_t		*mtx_fork;
 	unsigned int		fork_id;
 }						t_fork;
 
@@ -85,4 +85,8 @@ typedef struct s_global
 /** utils */
 void					error_exit(const char *msg);
 long					ft_atol(const char *str);
+bool					control_args(int argc);
+
+/** wrappers */
+void					*safe_malloc(size_t bytes);
 #endif
