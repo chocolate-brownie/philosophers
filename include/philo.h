@@ -6,11 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/22 11:55:05 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/25 09:36:33 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef PHILO_H
+#ifndef PHILO_H
 # define PHILO_H
 
 # include <errno.h>
@@ -51,17 +51,6 @@
 
 # define PHILO_MAX 200
 
-typedef enum e_opcode
-{
-	INIT,
-	DESTROY,
-	LOCK,
-	UNLOCK,
-	CREATE,
-	JOIN,
-	DETATCH,
-}					t_opcode;
-
 typedef enum e_status
 {
 	THINKING,
@@ -69,73 +58,38 @@ typedef enum e_status
 	SLEEPING,
 	FORK,
 	DIED,
-}					t_status;
+}						t_status;
+
+typedef struct s_philo	t_philo;
 
 typedef struct s_data
 {
-	unsigned int	nbr_of_philo;
-	uint32_t		time_to_die;
-	uint32_t		time_to_eat;
-	uint32_t		time_to_sleep;
-	uint32_t		time_to_think;
-	unsigned int	must_eat_count;
-	struct timeval	simul_start;
-	bool			someone_dead;
-	unsigned int	fulled_phils;
-	struct timeval	*last_meal;
-	pthread_mutex_t	*mtx_death;
-	pthread_mutex_t	*mtx_print;
-	pthread_mutex_t	*mtx_meal;
-	pthread_mutex_t	*mtx_forks;
-	pthread_mutex_t	*mtx_full;
-}					t_data;
+	unsigned int		nbr_of_philo;
+	uint32_t			time_to_die;
+	uint32_t			time_to_eat;
+	uint32_t			time_to_sleep;
+	uint32_t			time_to_think;
+	unsigned int		must_eat_count;
+	struct timeval		simul_start;
+	bool				someone_dead;
+	unsigned int		fulled_phils;
+	struct timeval		*last_meal;
+	pthread_mutex_t		*mtx_death;
+	pthread_mutex_t		*mtx_print;
+	pthread_mutex_t		*mtx_meal;
+	pthread_mutex_t		*mtx_forks;
+	pthread_mutex_t		*mtx_full;
+	t_philo				*philos;
+}						t_data;
 
 typedef struct s_philo
 {
-	unsigned int	philo_id;
-	t_status		status;
-	t_data			*data;
-	unsigned int	meals_eaten;
-	bool			is_full;
-}					t_philo;
+	unsigned int		philo_id;
+	t_status			status;
+	t_data				*data;
+	unsigned int		meals_eaten;
+	bool				is_full;
+}						t_philo;
 
-/** main functions */
-void				check_input(int argc, char *argv[]);
-
-/** libft functions */
-unsigned int		ft_strlen(const char *str);
-
-/** utillity functions */
-void				error_exit(const char *err_msg);
-void				*safe_malloc(size_t size);
-void				handle_mutexes(pthread_mutex_t *mutex, t_opcode opcode);
-void				handle_threads(pthread_t *thread,
-						void *(*function_name)(void *), void *arg,
-						t_opcode opcode);
-void				cleanup(t_data *data, pthread_t *threads,
-						pthread_mutex_t *mtxes);
-
-/** routine functions */
-void				*philo_routine(void *arg);
-void				*monitor_routine(void *arg);
-void				philo_mark_dead(t_data *data);
-bool				check_death(t_data *data);
-void				print_message(t_philo *philo, t_status status);
-
-/** fork grabbing mecha */
-bool	grabbing_forks(t_philo *philo);
-void	get_fork_indices(t_philo *philo, unsigned int *left_fork,
-		unsigned int *right_fork);
-
-
-/** time utility functions */
-void				ft_usleep(uint32_t time, t_data *data);
-struct timeval		get_current_time(struct timeval *time);
-uint32_t			get_elapsed_time(struct timeval start);
-
-/** debug functions
- * (WARNING: delete the debug.c files before pusing it has norminette error)
- */
-void				print_validated_data(t_data *data);
 
 #endif

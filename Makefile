@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/03/21 15:47:46 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/03/25 09:33:14 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ NC = \033[0m # No Color
 
 # Program name and arguments for testing
 NAME = philo
-TEST_ARGS = 3 800 300 120 2
+TEST_ARGS = 2 800 200 200
 
 # Directory paths and header
 SRC_DIR = src
@@ -45,7 +45,7 @@ HELGRIND_FLAGS = --tool=helgrind
 DRD_FLAGS = --tool=drd
 
 # Source files
-SRC_FILES = main.c debug.c utils1.c time_utils.c pthread_utils.c routines.c\
+SRC_FILES = main.c \
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))
