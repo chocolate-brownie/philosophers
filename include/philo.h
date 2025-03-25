@@ -6,14 +6,14 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 09:36:33 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/25 13:01:24 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
-# include <errno.h>
+# include <limits.h>
 # include <pthread.h>
 # include <stdbool.h>
 # include <stdint.h>
@@ -31,25 +31,11 @@
 # define PINK "\x1b[38;2;255;186;255m"
 # define RESET "\x1b[0m"
 
-# ifdef DEBUG
-#  define DEBUG_PRINT(...) printf("DEBUG: "__VA_ARGS__)
-#  define DEBUG_PRINT_RED(...) printf(RED "DEBUG: " RESET __VA_ARGS__)
-#  define DEBUG_PRINT_GREEN(...) printf(GREEN "DEBUG: " RESET __VA_ARGS__)
-#  define DEBUG_PRINT_YELLOW(...) printf(YELLOW "DEBUG: " RESET __VA_ARGS__)
-#  define DEBUG_PRINT_BLUE(...) printf(BLUE "DEBUG: " RESET __VA_ARGS__)
-#  define DEBUG_PRINT_PURPLE(...) printf(PURPLE "DEBUG: " RESET __VA_ARGS__)
-#  define DEBUG_PRINT_CYAN(...) printf(CYAN "DEBUG: " RESET __VA_ARGS__)
-# else
-#  define DEBUG_PRINT(...) ((void)0)
-#  define DEBUG_PRINT_RED(...) ((void)0)
-#  define DEBUG_PRINT_GREEN(...) ((void)0)
-#  define DEBUG_PRINT_YELLOW(...) ((void)0)
-#  define DEBUG_PRINT_BLUE(...) ((void)0)
-#  define DEBUG_PRINT_PURPLE(...) ((void)0)
-#  define DEBUG_PRINT_CYAN(...) ((void)0)
-# endif
-
 # define PHILO_MAX 200
+
+typedef struct s_fork	t_fork;
+typedef struct s_philo	t_philo;
+typedef struct s_global	t_global;
 
 typedef enum e_status
 {
@@ -60,36 +46,43 @@ typedef enum e_status
 	DIED,
 }						t_status;
 
-typedef struct s_philo	t_philo;
+/**NOTE:
+ * end_simul triggers if a philo dies or all philos are full
+ * */
 
-typedef struct s_data
+typedef struct s_fork
 {
-	unsigned int		nbr_of_philo;
-	uint32_t			time_to_die;
-	uint32_t			time_to_eat;
-	uint32_t			time_to_sleep;
-	uint32_t			time_to_think;
-	unsigned int		must_eat_count;
-	struct timeval		simul_start;
-	bool				someone_dead;
-	unsigned int		fulled_phils;
-	struct timeval		*last_meal;
-	pthread_mutex_t		*mtx_death;
-	pthread_mutex_t		*mtx_print;
-	pthread_mutex_t		*mtx_meal;
-	pthread_mutex_t		*mtx_forks;
-	pthread_mutex_t		*mtx_full;
-	t_philo				*philos;
-}						t_data;
+	pthread_mutex_t		*forks;
+	unsigned int		fork_id;
+}						t_fork;
 
 typedef struct s_philo
 {
 	unsigned int		philo_id;
-	t_status			status;
-	t_data				*data;
-	unsigned int		meals_eaten;
-	bool				is_full;
+	unsigned int		meals_count;
+	bool				full;
+	struct timeval		*last_meal_time;
+	t_fork				*left_fork;
+	t_fork				*right_fork;
+	pthread_t			thread_id;
+	t_global			*global_data;
+
 }						t_philo;
 
+typedef struct s_global
+{
+	unsigned int		nbr_of_philo;
+	unsigned int		time_to_die;
+	unsigned int		time_to_eat;
+	unsigned int		time_to_sleep;
+	unsigned int		must_eat_count;
+	struct timeval		*start_simul;
+	bool				end_simul;
+	t_fork				*forks;
+	t_philo				*philos;
+}						t_global;
 
+/** utils */
+void					error_exit(const char *msg);
+long					ft_atol(const char *str);
 #endif
