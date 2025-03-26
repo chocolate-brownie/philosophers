@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:58:53 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 17:42:15 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/26 11:56:23 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,19 @@ void	*safe_malloc(size_t bytes)
 {
 	void	*ret;
 
-	ret = malloc(sizeof(bytes));
+	ret = malloc((bytes));
 	if (!ret)
 		error_exit("malloc");
 	return (ret);
+}
+
+void	cleanup(t_global *data)
+{
+	unsigned int	i;
+
+	i = -1;
+	while (++i < data->nbr_of_philo)
+		pthread_mutex_destroy(&data->forks[i].mtx_fork);
+	free(data->forks);
+	free(data->philos);
 }

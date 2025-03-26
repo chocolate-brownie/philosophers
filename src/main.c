@@ -6,11 +6,12 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 18:00:10 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/26 21:09:02 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
+#include <bits/types/struct_timeval.h>
 
 static void	parsing_input(t_global *data, int argc, char **argv)
 {
@@ -34,30 +35,50 @@ static void	parsing_input(t_global *data, int argc, char **argv)
 	}
 }
 
-/**WARNING: this function causes potential memory leaks
- * if you create a clean_up function this could cause double free errors
- * */
+static void	init_philo(t_global *data)
+{
+	t_philo			*philo;
+	unsigned int	i;
+
+	philo = data->philos;
+	philo = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
+	i = -1;
+	while (++i < data->nbr_of_philo)
+	{
+		philo[i].philo_id = i + 1;
+		philo[i].full = false;
+		memset(&philo[i].last_meal_time, 0, sizeof(struct timeval));
+		philo[i].meals_count = 0;
+		philo[i].global_data = data;
+		// assign_forks(philo, data->forks, i); // TODO: function
+	}
+}
+
 static void	init_data(t_global *data)
 {
 	unsigned int	i;
 	int				mtx_result;
+	unsigned int	j;
 
 	memset(&data->start_simul, 0, sizeof(struct timeval));
 	data->end_simul = false;
 	data->forks = safe_malloc(sizeof(t_fork) * data->nbr_of_philo);
-	data->philos = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
 	i = -1;
 	while (++i < data->nbr_of_philo)
 	{
-		mtx_result = pthread_mutex_init(data->forks[i].mtx_fork, NULL);
+		mtx_result = pthread_mutex_init(&data->forks[i].mtx_fork, NULL);
 		if (mtx_result != 0)
 		{
+			j = -1;
+			while (++j < i)
+				pthread_mutex_destroy(&data->forks[j].mtx_fork);
 			free(data->forks);
 			free(data->philos);
-			error_exit("initiating mutexes");
+			error_exit("initiating forks mutexes");
 		}
 		data->forks[i].fork_id = i;
 	}
+	init_philo(data);
 }
 
 int	main(int argc, char *argv[])
@@ -66,5 +87,7 @@ int	main(int argc, char *argv[])
 
 	parsing_input(&data, argc, argv);
 	init_data(&data);
-	// start_simulation(&data);
+	// print_data(&data);
+	cleanup(&data);
+	return (0);
 }

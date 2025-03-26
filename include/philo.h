@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 17:53:30 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/26 18:36:19 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <sys/time.h> # include <unistd.h>
+# include <sys/time.h>
+# include <unistd.h>
 
 # define RED "\x1b[38;2;255;179;186m"
 # define GREEN "\x1b[38;2;186;255;201m"
@@ -46,13 +47,9 @@ typedef enum e_status
 	DIED,
 }						t_status;
 
-/**NOTE:
- * end_simul triggers if a philo dies or all philos are full
- * */
-
 typedef struct s_fork
 {
-	pthread_mutex_t		*mtx_fork;
+	pthread_mutex_t		mtx_fork;
 	unsigned int		fork_id;
 }						t_fork;
 
@@ -61,7 +58,7 @@ typedef struct s_philo
 	unsigned int		philo_id;
 	unsigned int		meals_count;
 	bool				full;
-	struct timeval		*last_meal_time;
+	struct timeval		last_meal_time;
 	t_fork				*left_fork;
 	t_fork				*right_fork;
 	pthread_t			thread_id;
@@ -76,7 +73,7 @@ typedef struct s_global
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
 	unsigned int		must_eat_count;
-	struct timeval		*start_simul;
+	struct timeval		start_simul;
 	bool				end_simul;
 	t_fork				*forks;
 	t_philo				*philos;
@@ -86,7 +83,11 @@ typedef struct s_global
 void					error_exit(const char *msg);
 long					ft_atol(const char *str);
 bool					control_args(int argc);
+void					cleanup(t_global *data);
 
 /** wrappers */
 void					*safe_malloc(size_t bytes);
+
+/* debugging functions */
+void					print_data(t_global *data);
 #endif
