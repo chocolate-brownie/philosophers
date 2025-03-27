@@ -6,28 +6,23 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 13:00:13 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/27 14:55:16 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/27 19:10:02 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-/*
 static void	handle_philo_one(t_global *data)
 {
-	if (data->nbr_of_philo == 1)
-	{
-		gettimeofday(&data->start_simul, NULL);
-		print_state(&data->philos[0], "has taken a fork");
-		usleep(data->time_to_die);
-		print_state(&data->philos[0], "died");
-		data->end_simul = true;
-		return ;
-	}
+	(void)data;
+	return ;
 }
- */
+
 void	*start_routine(void *arg)
 {
+	t_philo	*philo;
+
+	philo = (t_philo *)arg;
 	return (NULL);
 }
 
@@ -39,7 +34,7 @@ void	simulation(t_global *data)
 
 	if (data->must_eat_count == 0)
 		return ;
-	// handle_philo_one(data);
+	handle_philo_one(data); // TODO: function
 	i = -1;
 	while (++i < data->nbr_of_philo)
 	{

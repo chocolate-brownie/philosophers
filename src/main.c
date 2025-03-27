@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/27 15:45:40 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/27 15:53:53 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,21 +56,19 @@ static void	assign_forks(t_philo *philo, t_fork *forks,
 philosopher */
 static void	init_philo(t_global *data)
 {
-	t_philo			*philo;
 	unsigned int	i;
 
-	philo = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
+	data->philos = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
 	i = 0;
 	while (i < data->nbr_of_philo)
 	{
-		philo->global_data = data;
-		philo->philo_id = i + 1;
-		philo->full = false;
-		philo->meals_count = 0;
-		memset(&philo->last_meal_time, 0, sizeof(struct timeval));
-		philo->thread_id = 0;
-		assign_forks(philo, data->forks, i);
-		philo++;
+		data->philos[i].global_data = data;
+		data->philos[i].philo_id = i + 1;
+		data->philos[i].full = false;
+		data->philos[i].meals_count = 0;
+		memset(&data->philos[i].last_meal_time, 0, sizeof(struct timeval));
+		data->philos[i].thread_id = 0;
+		assign_forks(&data->philos[i], data->forks, i);
 		i++;
 	}
 }
