@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/26 18:36:19 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/27 13:01:56 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,10 @@ void					cleanup(t_global *data);
 /** wrappers */
 void					*safe_malloc(size_t bytes);
 
-/* debugging functions */
+/** debugging function */
 void					print_data(t_global *data);
+
+/** main simulation */
+void					simulation(t_global *data);
+
 #endif

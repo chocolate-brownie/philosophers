@@ -6,12 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/26 21:09:02 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/27 15:45:40 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-#include <bits/types/struct_timeval.h>
 
 static void	parsing_input(t_global *data, int argc, char **argv)
 {
@@ -35,22 +34,44 @@ static void	parsing_input(t_global *data, int argc, char **argv)
 	}
 }
 
+static void	assign_forks(t_philo *philo, t_fork *forks,
+		unsigned int philo_position)
+{
+	unsigned int	nbr_of_philo;
+
+	nbr_of_philo = philo->global_data->nbr_of_philo;
+	if (philo->philo_id % 2 == 0)
+	{
+		philo->right_fork = &forks[philo_position];
+		philo->left_fork = &forks[(philo_position + 1) % nbr_of_philo];
+	}
+	else
+	{
+		philo->right_fork = &forks[(philo_position + 1) % nbr_of_philo];
+		philo->left_fork = &forks[philo_position];
+	}
+}
+
+/** @note potential bucause of the pointer arithmetic with moving to the next
+philosopher */
 static void	init_philo(t_global *data)
 {
 	t_philo			*philo;
 	unsigned int	i;
 
-	philo = data->philos;
 	philo = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
-	i = -1;
-	while (++i < data->nbr_of_philo)
+	i = 0;
+	while (i < data->nbr_of_philo)
 	{
-		philo[i].philo_id = i + 1;
-		philo[i].full = false;
-		memset(&philo[i].last_meal_time, 0, sizeof(struct timeval));
-		philo[i].meals_count = 0;
-		philo[i].global_data = data;
-		// assign_forks(philo, data->forks, i); // TODO: function
+		philo->global_data = data;
+		philo->philo_id = i + 1;
+		philo->full = false;
+		philo->meals_count = 0;
+		memset(&philo->last_meal_time, 0, sizeof(struct timeval));
+		philo->thread_id = 0;
+		assign_forks(philo, data->forks, i);
+		philo++;
+		i++;
 	}
 }
 
@@ -72,8 +93,7 @@ static void	init_data(t_global *data)
 			j = -1;
 			while (++j < i)
 				pthread_mutex_destroy(&data->forks[j].mtx_fork);
-			free(data->forks);
-			free(data->philos);
+			cleanup(data);
 			error_exit("initiating forks mutexes");
 		}
 		data->forks[i].fork_id = i;
@@ -87,6 +107,7 @@ int	main(int argc, char *argv[])
 
 	parsing_input(&data, argc, argv);
 	init_data(&data);
+	simulation(&data);
 	// print_data(&data);
 	cleanup(&data);
 	return (0);
