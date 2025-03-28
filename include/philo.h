@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/28 18:29:22 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/28 19:01:56 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,9 @@ void					cleanup(t_global *data);
 bool					set_bool(pthread_mutex_t *mutex_data, bool *dest,
 							bool value);
 bool					get_bool(pthread_mutex_t *mutex_data, bool *value);
+bool					simulation_finished(t_global *data);
+/** sync utils */
+void					wait_all_threads(t_global *data);
 
 /** wrappers */
 void					*safe_malloc(size_t bytes);
