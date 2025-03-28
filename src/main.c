@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/27 15:53:53 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/28 17:52:29 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ static void	assign_forks(t_philo *philo, t_fork *forks,
 	}
 }
 
-/** @note potential bucause of the pointer arithmetic with moving to the next
+/** @note potential FIXME: bucause of the pointer arithmetic with moving to the next
 philosopher */
 static void	init_philo(t_global *data)
 {

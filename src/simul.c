@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 13:00:13 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/27 19:10:02 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/28 18:24:20 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ void	simulation(t_global *data)
 			error_exit("Creating threads for start_routine");
 		}
 	}
-	i = -1;
-	while (++i < data->nbr_of_philo)
-		pthread_join(data->philos[i].thread_id, NULL);
+	if (!set_bool(&data->mutex_data, &data->all_threads_ready, true))
+		return ;
 }

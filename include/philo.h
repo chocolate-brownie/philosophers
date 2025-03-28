@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/27 13:01:56 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/28 18:29:22 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,8 @@ typedef struct s_global
 	unsigned int		must_eat_count;
 	struct timeval		start_simul;
 	bool				end_simul;
+	bool				all_threads_ready;
+	pthread_mutex_t		mutex_data;
 	t_fork				*forks;
 	t_philo				*philos;
 }						t_global;
@@ -84,6 +86,10 @@ void					error_exit(const char *msg);
 long					ft_atol(const char *str);
 bool					control_args(int argc);
 void					cleanup(t_global *data);
+/** getters and setters functions */
+bool					set_bool(pthread_mutex_t *mutex_data, bool *dest,
+							bool value);
+bool					get_bool(pthread_mutex_t *mutex_data, bool *value);
 
 /** wrappers */
 void					*safe_malloc(size_t bytes);
