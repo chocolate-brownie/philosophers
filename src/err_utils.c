@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:58:53 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/28 18:40:11 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/28 19:17:53 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ void	cleanup(t_global *data)
 		free(data->forks);
 	else if (data->philos)
 		free(data->philos);
+	pthread_mutex_destroy(&data->mutex_data);
 }
 
 bool	simulation_finished(t_global *data)

@@ -6,11 +6,13 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/28 17:52:29 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/29 17:47:13 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
+#include <pthread.h>
+#include <unistd.h>
 
 static void	parsing_input(t_global *data, int argc, char **argv)
 {
@@ -52,11 +54,11 @@ static void	assign_forks(t_philo *philo, t_fork *forks,
 	}
 }
 
-/** @note potential FIXME: bucause of the pointer arithmetic with moving to the next
-philosopher */
 static void	init_philo(t_global *data)
 {
 	unsigned int	i;
+	unsigned int	err_mtx;
+	unsigned int	j;
 
 	data->philos = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
 	i = 0;
@@ -66,8 +68,11 @@ static void	init_philo(t_global *data)
 		data->philos[i].philo_id = i + 1;
 		data->philos[i].full = false;
 		data->philos[i].meals_count = 0;
-		memset(&data->philos[i].last_meal_time, 0, sizeof(struct timeval));
 		data->philos[i].thread_id = 0;
+		data->philos[i].last_meal_time = 0;
+		err_mtx = pthread_mutex_init(&data->philos[i].philo_mutex, NULL);
+		if (err_mtx)
+			write(STDERR_FILENO, "Error: locking mutex\n", 21);
 		assign_forks(&data->philos[i], data->forks, i);
 		i++;
 	}
@@ -79,8 +84,10 @@ static void	init_data(t_global *data)
 	int				mtx_result;
 	unsigned int	j;
 
-	memset(&data->start_simul, 0, sizeof(struct timeval));
+	data->start_simul = 0;
 	data->end_simul = false;
+	data->all_threads_ready = false;
+	pthread_mutex_init(&data->mutex_data, NULL);
 	data->forks = safe_malloc(sizeof(t_fork) * data->nbr_of_philo);
 	i = -1;
 	while (++i < data->nbr_of_philo)

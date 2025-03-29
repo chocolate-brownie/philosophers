@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:54:52 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 20:29:44 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/29 16:47:48 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,25 @@ void	print_data(t_global *data)
 	printf("Time to eat: %u\n", data->time_to_eat);
 	printf("Time to sleep: %u\n", data->time_to_sleep);
 	printf("Must eat count %u\n", data->must_eat_count);
-	time_in_sec = data->start_simul->tv_sec + (data->start_simul->tv_usec
-			/ 1000000.0);
-	printf("Time: %.6f seconds\n", time_in_sec);
 	printf("Anybody died? Are philos full?: %d\n", data->end_simul);
+}
+
+void	write_status_debug(t_status status, t_philo *philo, long elapsed_time)
+{
+	if (status == FORK_ONE && !simulation_finished(philo->global_data))
+		printf("\t\t\t%-6ld %d has taken 1st fork " CYAN "[id: %u]\n" RESET,
+			elapsed_time, philo->philo_id, philo->right_fork->fork_id);
+	else if (status == FORK_TWO && !simulation_finished(philo->global_data))
+		printf("\t\t\t%-6ld %d has taken 2nd fork " CYAN "[id: %u]\n" RESET,
+			elapsed_time, philo->philo_id, philo->right_fork->fork_id);
+	else if (status == EATING && !simulation_finished(philo->global_data))
+		printf("\t\t\t%-6ld %d is eating" YELLOW "[meals eaten: %d]\n" RESET,
+			elapsed_time, philo->philo_id, philo->meals_count);
+	else if (status == THINKING && !simulation_finished(philo->global_data))
+		printf("\t\t\t%-6ld %d is thinking\n", elapsed_time, philo->philo_id);
+	else if (status == SLEEPING && !simulation_finished(philo->global_data))
+		printf("\t\t\t%-6ld %d is sleeping\n", elapsed_time, philo->philo_id);
+	else if (status == DIED)
+		printf(RED "\t\t\t%-6ld %d died\n" RESET, elapsed_time,
+			philo->philo_id);
 }

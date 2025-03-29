@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/28 19:01:56 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/29 17:59:30 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,26 @@
 # define RESET "\x1b[0m"
 
 # define PHILO_MAX 200
+# define DEBUG 0
 
 typedef struct s_fork	t_fork;
 typedef struct s_philo	t_philo;
 typedef struct s_global	t_global;
+
+typedef enum e_time
+{
+	SECONDS,
+	MILLISECONDS,
+	MICROSECONDS,
+}						t_time;
 
 typedef enum e_status
 {
 	THINKING,
 	EATING,
 	SLEEPING,
-	FORK,
+	FORK_ONE,
+	FORK_TWO,
 	DIED,
 }						t_status;
 
@@ -58,10 +67,11 @@ typedef struct s_philo
 	unsigned int		philo_id;
 	unsigned int		meals_count;
 	bool				full;
-	struct timeval		last_meal_time;
-	t_fork				*left_fork;
+	long				last_meal_time;
 	t_fork				*right_fork;
+	t_fork				*left_fork;
 	pthread_t			thread_id;
+	pthread_mutex_t		philo_mutex;
 	t_global			*global_data;
 
 }						t_philo;
@@ -73,34 +83,38 @@ typedef struct s_global
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
 	unsigned int		must_eat_count;
-	struct timeval		start_simul;
+	long				start_simul;
 	bool				end_simul;
 	bool				all_threads_ready;
 	pthread_mutex_t		mutex_data;
+	pthread_mutex_t		mtx_print;
 	t_fork				*forks;
 	t_philo				*philos;
 }						t_global;
 
-/** utils */
 void					error_exit(const char *msg);
 long					ft_atol(const char *str);
 bool					control_args(int argc);
 void					cleanup(t_global *data);
-/** getters and setters functions */
+long					get_time(t_time timecode);
+void					ft_usleep(long usec, t_global *data);
+void					*safe_malloc(size_t bytes);
 bool					set_bool(pthread_mutex_t *mutex_data, bool *dest,
 							bool value);
 bool					get_bool(pthread_mutex_t *mutex_data, bool *value);
 bool					simulation_finished(t_global *data);
-/** sync utils */
 void					wait_all_threads(t_global *data);
-
-/** wrappers */
-void					*safe_malloc(size_t bytes);
-
-/** debugging function */
-void					print_data(t_global *data);
-
-/** main simulation */
+void					join_threads(t_global *data);
 void					simulation(t_global *data);
+void					print_status(t_status status, t_philo *philo,
+							bool debug);
+bool					set_long(pthread_mutex_t *mutex_data, long *dest,
+							long value);
+long					get_long(pthread_mutex_t *mutex_data, long *value);
+
+/** debugging functions */
+void					print_data(t_global *data);
+void					write_status_debug(t_status status, t_philo *philo,
+							long elapsed_time);
 
 #endif
