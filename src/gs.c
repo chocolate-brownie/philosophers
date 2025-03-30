@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 17:55:50 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/29 17:55:56 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 16:45:35 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,30 +53,23 @@ bool	get_bool(pthread_mutex_t *mutex_data, bool *value)
 	return (result);
 }
 
-bool	set_long(pthread_mutex_t *mutex_data, long *dest, long value)
+void	set_long(pthread_mutex_t *mutex_data, long *dest, long value)
 {
 	unsigned int	err_result;
 
 	err_result = pthread_mutex_lock(mutex_data);
 	if (err_result != 0)
-	{
-		write(STDERR_FILENO, "Error: locking mutex\n", 21);
-		return (false);
-	}
+		error_exit("locking mutexes");
 	*dest = value;
 	err_result = pthread_mutex_unlock(mutex_data);
 	if (err_result != 0)
-	{
-		write(STDERR_FILENO, "Error: unlocking mutex\n", 23);
-		return (false);
-	}
-	return (true);
+		error_exit("unlocking mutexes");
 }
 
 long	get_long(pthread_mutex_t *mutex_data, long *value)
 {
-	unsigned int err_result;
-	long result;
+	unsigned int	err_result;
+	long			result;
 
 	err_result = pthread_mutex_lock(mutex_data);
 	if (err_result != 0)

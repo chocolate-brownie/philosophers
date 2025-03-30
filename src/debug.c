@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:54:52 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 15:01:00 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 15:23:58 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	write_status_debug(t_status status, t_philo *philo, long elapsed_time)
 		printf("%-6ld %d has taken 2nd fork " CYAN "[id: %u]\n" RESET,
 			elapsed_time, philo->philo_id, philo->left_fork->fork_id);
 	else if (status == EATING && !simulation_finished(philo->global_data))
-		printf("%-6ld %d is eating" YELLOW "[meals eaten: %d]\n" RESET,
+		printf("%-6ld %d is eating" YELLOW "[meals eaten: %ld]\n" RESET,
 			elapsed_time, philo->philo_id, philo->meals_count);
 	else if (status == THINKING && !simulation_finished(philo->global_data))
 		printf("%-6ld %d is thinking\n", elapsed_time, philo->philo_id);

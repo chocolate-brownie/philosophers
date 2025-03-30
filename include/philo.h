@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 15:12:56 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 17:09:58 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,7 @@ typedef struct s_global
 	unsigned int		time_to_eat;
 	unsigned int		time_to_sleep;
 	unsigned int		must_eat_count;
+	long				nbr_running_threads;
 	long				start_simul;
 	bool				end_simul;
 	bool				all_threads_ready;
@@ -109,10 +110,14 @@ void					join_threads(t_global *data);
 void					simulation(t_global *data);
 void					print_status(t_status status, t_philo *philo,
 							bool debug);
-bool					set_long(pthread_mutex_t *mutex_data, long *dest,
+void					set_long(pthread_mutex_t *mutex_data, long *dest,
 							long value);
 long					get_long(pthread_mutex_t *mutex_data, long *value);
-
+void					set_increase_long(pthread_mutex_t *mutex, long *value);
+void					monitoring(t_global *data);
+bool					all_threads_are_running(pthread_mutex_t *mutex,
+							long *threads, unsigned int nbr_of_philo);
+void					handle_philo_one(t_global *data);
 /** debugging functions */
 void					print_data(t_global *data);
 void					write_status_debug(t_status status, t_philo *philo,

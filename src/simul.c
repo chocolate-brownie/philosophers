@@ -6,22 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 13:00:13 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 15:14:20 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 17:09:36 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-
-static void	handle_philo_one(t_global *data)
-{
-	if (data->nbr_of_philo == 1)
-	{
-		print_status(FORK_ONE, data->philos, DEBUG);
-		ft_usleep(data->time_to_die, data);
-		print_status(DIED, data->philos, DEBUG);
-		set_bool(&data->mutex_data, &data->end_simul, true);
-	}
-}
 
 static void	thinking(t_philo *philo)
 {
@@ -37,9 +26,8 @@ static void	eating(t_philo *philo)
 	print_status(FORK_ONE, philo, DEBUG);
 	pthread_mutex_lock(&philo->left_fork->mtx_fork);
 	print_status(FORK_TWO, philo, DEBUG);
-	if (!set_long(&philo->philo_mutex, &philo->last_meal_time,
-			get_time(MILLISECONDS)))
-		return ;
+	set_long(&philo->philo_mutex, &philo->last_meal_time,
+		get_time(MILLISECONDS));
 	meals_count = philo->meals_count + 1;
 	set_long(&philo->philo_mutex, &philo->meals_count, meals_count);
 	print_status(EATING, philo, DEBUG);
@@ -56,6 +44,10 @@ static void	*start_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	wait_all_threads(philo->global_data);
+	set_long(&philo->philo_mutex, &philo->last_meal_time,
+		get_time(MILLISECONDS));
+	set_increase_long(&philo->global_data->mutex_data,
+		&philo->global_data->nbr_running_threads);
 	handle_philo_one(philo->global_data);
 	while (!simulation_finished(philo->global_data))
 	{
@@ -69,27 +61,13 @@ static void	*start_routine(void *arg)
 	return (NULL);
 }
 
-void	join_threads(t_global *data)
-{
-	unsigned int	i;
-	int				err;
-
-	i = -1;
-	while (++i < data->nbr_of_philo)
-	{
-		err = pthread_join(data->philos[i].thread_id, NULL);
-		if (err)
-			write(STDERR_FILENO, "error join threads\n", 19);
-	}
-}
-
 void	simulation(t_global *data)
 {
 	int				thread_result;
 	unsigned int	i;
 	unsigned int	j;
 
-	if (data->must_eat_count == 0)
+	if (get_long(&data->mutex_data, (long *)&data->must_eat_count) == 0)
 		return ;
 	i = -1;
 	while (++i < data->nbr_of_philo)
@@ -105,6 +83,7 @@ void	simulation(t_global *data)
 			error_exit("Creating threads for start_routine");
 		}
 	}
+	monitoring(data);
 	data->start_simul = get_time(MILLISECONDS);
 	if (!set_bool(&data->mutex_data, &data->all_threads_ready, true))
 		return ;

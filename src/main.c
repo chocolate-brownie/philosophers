@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 15:01:34 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 15:32:27 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ static void	init_data(t_global *data)
 	unsigned int	j;
 
 	data->start_simul = 0;
+	data->nbr_running_threads = 0;
 	data->end_simul = false;
 	data->all_threads_ready = false;
 	pthread_mutex_init(&data->mutex_data, NULL);
