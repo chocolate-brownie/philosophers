@@ -6,13 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/29 17:47:13 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 15:01:34 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
-#include <pthread.h>
-#include <unistd.h>
 
 static void	parsing_input(t_global *data, int argc, char **argv)
 {
@@ -58,11 +56,10 @@ static void	init_philo(t_global *data)
 {
 	unsigned int	i;
 	unsigned int	err_mtx;
-	unsigned int	j;
 
 	data->philos = safe_malloc(sizeof(t_philo) * data->nbr_of_philo);
-	i = 0;
-	while (i < data->nbr_of_philo)
+	i = -1;
+	while (++i < data->nbr_of_philo)
 	{
 		data->philos[i].global_data = data;
 		data->philos[i].philo_id = i + 1;
@@ -74,7 +71,6 @@ static void	init_philo(t_global *data)
 		if (err_mtx)
 			write(STDERR_FILENO, "Error: locking mutex\n", 21);
 		assign_forks(&data->philos[i], data->forks, i);
-		i++;
 	}
 }
 

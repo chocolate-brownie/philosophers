@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/29 17:59:30 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/30 15:12:56 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 # define RESET "\x1b[0m"
 
 # define PHILO_MAX 200
-# define DEBUG 0
+# define DEBUG 1
 
 typedef struct s_fork	t_fork;
 typedef struct s_philo	t_philo;
@@ -65,7 +65,7 @@ typedef struct s_fork
 typedef struct s_philo
 {
 	unsigned int		philo_id;
-	unsigned int		meals_count;
+	long				meals_count;
 	bool				full;
 	long				last_meal_time;
 	t_fork				*right_fork;
@@ -90,6 +90,7 @@ typedef struct s_global
 	pthread_mutex_t		mtx_print;
 	t_fork				*forks;
 	t_philo				*philos;
+	pthread_t			thread_monitor;
 }						t_global;
 
 void					error_exit(const char *msg);
