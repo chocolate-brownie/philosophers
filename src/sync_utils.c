@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 19:00:56 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 16:39:46 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/01 14:03:33 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool	all_threads_are_running(pthread_mutex_t *mutex, long *threads,
 	err_mtx = pthread_mutex_lock(mutex);
 	if (err_mtx != 0)
 	{
-		write(STDERR_FILENO, "Error locking mutex\n", 20);
+		write(STDERR_FILENO, "Error locking mutexx\n", 21);
 		return (false);
 	}
 	if (*threads == (long)nbr_of_philo)

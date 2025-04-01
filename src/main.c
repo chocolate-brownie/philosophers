@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 15:32:27 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/03/31 20:14:23 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static void	init_philo(t_global *data)
 		data->philos[i].last_meal_time = 0;
 		err_mtx = pthread_mutex_init(&data->philos[i].philo_mutex, NULL);
 		if (err_mtx)
-			write(STDERR_FILENO, "Error: locking mutex\n", 21);
+			error_exit("initing mutexes (init_philo)");
 		assign_forks(&data->philos[i], data->forks, i);
 	}
 }
@@ -77,27 +77,18 @@ static void	init_philo(t_global *data)
 static void	init_data(t_global *data)
 {
 	unsigned int	i;
-	int				mtx_result;
-	unsigned int	j;
 
 	data->start_simul = 0;
 	data->nbr_running_threads = 0;
 	data->end_simul = false;
 	data->all_threads_ready = false;
 	pthread_mutex_init(&data->mutex_data, NULL);
+	pthread_mutex_init(&data->mtx_print, NULL);
 	data->forks = safe_malloc(sizeof(t_fork) * data->nbr_of_philo);
 	i = -1;
 	while (++i < data->nbr_of_philo)
 	{
-		mtx_result = pthread_mutex_init(&data->forks[i].mtx_fork, NULL);
-		if (mtx_result != 0)
-		{
-			j = -1;
-			while (++j < i)
-				pthread_mutex_destroy(&data->forks[j].mtx_fork);
-			cleanup(data);
-			error_exit("initiating forks mutexes");
-		}
+		pthread_mutex_init(&data->forks[i].mtx_fork, NULL);
 		data->forks[i].fork_id = i;
 	}
 	init_philo(data);

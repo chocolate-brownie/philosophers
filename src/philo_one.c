@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 17:08:00 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 17:10:05 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/01 12:54:38 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,5 +16,6 @@ void	handle_philo_one(t_global *data)
 {
 	if (data->nbr_of_philo == 1)
 	{
+		return ;
 	}
 }

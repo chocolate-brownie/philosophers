@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/27 13:00:13 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/30 17:09:36 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/01 13:59:23 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,19 @@ static void	*start_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	/* printf("Philo thread data structure at %p\n",
+		(void *)philo->global_data);
+	printf("Philo thread mutex_data at %p\n",
+		(void *)&philo->global_data->mutex_data); */
 	wait_all_threads(philo->global_data);
-	set_long(&philo->philo_mutex, &philo->last_meal_time,
-		get_time(MILLISECONDS));
 	set_increase_long(&philo->global_data->mutex_data,
 		&philo->global_data->nbr_running_threads);
+	/* printf(BLUE "Philo thread nbr_running_threads at %p (value:
+		%ld)\n" RESET,
+		(void *)&philo->global_data->nbr_running_threads,
+		philo->global_data->nbr_running_threads); */
+	/* set_long(&philo->philo_mutex, &philo->last_meal_time,
+		get_time(MILLISECONDS)); */
 	handle_philo_one(philo->global_data);
 	while (!simulation_finished(philo->global_data))
 	{
