@@ -6,41 +6,52 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:48 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 15:00:50 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/01 21:26:21 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-/*
 static bool	philo_died(t_philo *philo)
 {
+	long	current_time;
+	long	last_meal_time;
 	long	elapsed;
 	long	time_to_die;
 
 	if (get_bool(&philo->philo_mutex, &philo->full))
-		return (true);
-	elapsed = get_time(MILLISECONDS) - get_long(&philo->philo_mutex,
-			&philo->last_meal_time);
+		return (false);
+	current_time = get_time(MILLISECONDS);
+	last_meal_time = get_long(&philo->philo_mutex, &philo->last_meal_time);
+	elapsed = current_time - last_meal_time;
 	time_to_die = (long)philo->global_data->time_to_die / 1e3;
 	if (elapsed > time_to_die)
 		return (true);
 	return (false);
 }
-*/
+
 static void	*monitor_routine(void *arg)
 {
-	t_global	*data;
+	t_global		*data;
+	unsigned int	i;
 
 	data = (t_global *)arg;
-	/* printf("Monitor data structure at %p\n", (void *)data);
-	printf("Monitor mutex_data at %p\n", (void *)&data->mutex_data);
-	printf("Monitor nbr_running_threads at %p (value: %ld)\n",
-		(void *)&data->nbr_running_threads, data->nbr_running_threads); */
-	// Make sure all philos are running
 	while (!all_threads_are_running(&data->mutex_data,
 			&data->nbr_running_threads, data->nbr_of_philo))
 		ft_usleep(1000, data);
+	while (!simulation_finished(data))
+	{
+		i = -1;
+		while (++i < data->nbr_of_philo && !simulation_finished(data))
+		{
+			if (philo_died(&data->philos[i]))
+			{
+				set_bool(&data->mutex_data, &data->end_simul, true);
+				print_status(DIED, &data->philos[i], DEBUG);
+			}
+		}
+		usleep(1e3);
+	}
 	return (NULL);
 }
 
@@ -55,5 +66,4 @@ void	monitoring(t_global *data)
 		write(STDERR_FILENO, "Error creatin monitor threads\n", 30);
 		return ;
 	}
-	// pthread_join(data->thread_monitor, NULL);
 }

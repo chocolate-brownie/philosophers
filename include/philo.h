@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/31 17:10:38 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/01 15:19:32 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void					set_increase_long(pthread_mutex_t *mutex, long *value);
 void					monitoring(t_global *data);
 bool					all_threads_are_running(pthread_mutex_t *mutex,
 							long *threads, unsigned int nbr_of_philo);
-void					handle_philo_one(t_global *data);
+void					*handle_philo_one(void *arg);
 /** debugging functions */
 void					print_data(t_global *data);
 void					write_status_debug(t_status status, t_philo *philo,
