@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/03/31 17:17:25 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/04/02 22:24:18 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ NC = \033[0m # No Color
 
 # Program name and arguments for testing
 NAME = philo
-TEST_ARGS = 2 800 200 200
+TEST_ARGS = 4 410 200 200 2
 
 # Directory paths and header
 SRC_DIR = src
@@ -46,7 +46,7 @@ DRD_FLAGS = --tool=drd
 
 # Source files
 SRC_FILES = main.c ft_atol.c err_utils.c debug.c simul.c gs.c sync_utils.c \
-			time_utils.c philo_one.c monitor.c\
+			time_utils.c monitor.c sig_exit.c\
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

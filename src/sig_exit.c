@@ -1,29 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_one.c                                        :+:      :+:    :+:   */
+/*   sig_exit.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/30 17:08:00 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 19:05:47 by mgodawat         ###   ########.fr       */
+/*   Created: 2025/04/02 22:13:07 by mgodawat          #+#    #+#             */
+/*   Updated: 2025/04/02 22:30:00 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
+#include <signal.h>
 
-void	*handle_philo_one(void *arg)
+static t_global	*data_ptr = NULL;
+
+void	sigint_handler(int sig)
 {
-	t_philo	*philo;
+	(void)sig;
+	if (data_ptr)
+	{
+		pthread_mutex_lock(&data_ptr->mutex_data);
+		data_ptr->end_simul = true;
+		pthread_mutex_unlock(&data_ptr->mutex_data);
+		printf(RED "\nshutting down...\n" RESET);
+	}
+}
 
-	philo = (t_philo *)arg;
-	wait_all_threads(philo->global_data);
-	set_long(&philo->philo_mutex, &philo->last_meal_time,
-		get_time(MILLISECONDS));
-	set_increase_long(&philo->global_data->mutex_data,
-		&philo->global_data->nbr_running_threads);
-	print_status(FORK_ONE, philo, DEBUG);
-	while (!simulation_finished(philo->global_data))
-		usleep(200);
-	return (NULL);
+void	setup_signal_handling(t_global *data)
+{
+	data_ptr = data;
+	signal(SIGINT, sigint_handler);
 }

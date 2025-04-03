@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/31 20:14:23 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:23:56 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,8 @@ int	main(int argc, char *argv[])
 
 	parsing_input(&data, argc, argv);
 	init_data(&data);
+	setup_signal_handling(&data);
 	simulation(&data);
-	// print_data(&data);
 	cleanup(&data);
 	return (0);
 }

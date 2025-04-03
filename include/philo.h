@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 15:19:32 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:58:19 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ void					cleanup(t_global *data);
 long					get_time(t_time timecode);
 void					ft_usleep(long usec, t_global *data);
 void					*safe_malloc(size_t bytes);
-bool					set_bool(pthread_mutex_t *mutex_data, bool *dest,
+void					set_bool(pthread_mutex_t *mutex_data, bool *dest,
 							bool value);
 bool					get_bool(pthread_mutex_t *mutex_data, bool *value);
 bool					simulation_finished(t_global *data);
@@ -117,10 +117,14 @@ void					set_increase_long(pthread_mutex_t *mutex, long *value);
 void					monitoring(t_global *data);
 bool					all_threads_are_running(pthread_mutex_t *mutex,
 							long *threads, unsigned int nbr_of_philo);
-void					*handle_philo_one(void *arg);
+void					calculate_thinking(t_philo *philo);
+void					thinking(t_philo *philo, bool pre_simul);
 /** debugging functions */
 void					print_data(t_global *data);
 void					write_status_debug(t_status status, t_philo *philo,
 							long elapsed_time);
+/** ctrl+c exit clean up */
+void					sigint_handler(int sig);
+void					setup_signal_handling(t_global *data);
 
 #endif

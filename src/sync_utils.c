@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 19:00:56 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 14:03:33 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:58:40 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,20 +48,6 @@ void	print_status(t_status status, t_philo *philo, bool debug)
 	pthread_mutex_unlock(&philo->global_data->mtx_print);
 }
 
-void	join_threads(t_global *data)
-{
-	unsigned int	i;
-	int				err;
-
-	i = -1;
-	while (++i < data->nbr_of_philo)
-	{
-		err = pthread_join(data->philos[i].thread_id, NULL);
-		if (err)
-			write(STDERR_FILENO, "error join threads\n", 19);
-	}
-}
-
 void	set_increase_long(pthread_mutex_t *mutex, long *value)
 {
 	int	err_mtx;
@@ -97,4 +83,18 @@ bool	all_threads_are_running(pthread_mutex_t *mutex, long *threads,
 		return (false);
 	}
 	return (result);
+}
+
+void	calculate_thinking(t_philo *philo)
+{
+	if (philo->global_data->nbr_of_philo % 2 == 0)
+	{
+		if (philo->philo_id % 2 == 0)
+			ft_usleep(3e4, philo->global_data);
+	}
+	else
+	{
+		if (philo->philo_id % 2 == 1)
+			thinking(philo, true);
+	}
 }

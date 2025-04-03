@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/30 15:22:48 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 21:26:21 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 14:25:50 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static void	*monitor_routine(void *arg)
 	data = (t_global *)arg;
 	while (!all_threads_are_running(&data->mutex_data,
 			&data->nbr_running_threads, data->nbr_of_philo))
-		ft_usleep(1000, data);
+		;
 	while (!simulation_finished(data))
 	{
 		i = -1;
@@ -50,7 +50,6 @@ static void	*monitor_routine(void *arg)
 				print_status(DIED, &data->philos[i], DEBUG);
 			}
 		}
-		usleep(1e3);
 	}
 	return (NULL);
 }
@@ -66,4 +65,5 @@ void	monitoring(t_global *data)
 		write(STDERR_FILENO, "Error creatin monitor threads\n", 30);
 		return ;
 	}
+	// pthread_join(data->thread_monitor, NULL);
 }

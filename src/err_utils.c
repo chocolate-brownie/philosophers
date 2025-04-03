@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:58:53 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/01 21:25:14 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/02 22:45:18 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,17 @@ void	*safe_malloc(size_t bytes)
 
 void	cleanup(t_global *data)
 {
+	unsigned int	i;
+
+	i = -1;
+	while (++i < data->nbr_of_philo)
+		pthread_mutex_destroy(&data->philos[i].philo_mutex);
+	pthread_mutex_destroy(&data->mtx_print);
+	pthread_mutex_destroy(&data->mutex_data);
 	if (data->forks)
 		free(data->forks);
-	else if (data->philos)
+	if (data->philos)
 		free(data->philos);
-	pthread_mutex_destroy(&data->mutex_data);
 }
 
 bool	simulation_finished(t_global *data)
