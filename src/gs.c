@@ -6,11 +6,11 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/28 17:55:50 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/02 20:24:47 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 16:29:28 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+/* #include "../include/philo.h"
 
 void	set_bool(pthread_mutex_t *mutex_data, bool *dest, bool value)
 {
@@ -72,4 +72,4 @@ long	get_long(pthread_mutex_t *mutex_data, long *value)
 	if (err_result != 0)
 		write(STDERR_FILENO, "Error: unlocking mutex at get_long\n", 35);
 	return (result);
-}
+} */

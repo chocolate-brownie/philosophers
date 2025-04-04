@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:58:53 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/02 22:45:18 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:16:15 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,47 +18,14 @@ void	error_exit(const char *msg)
 	exit(EXIT_FAILURE);
 }
 
-bool	control_args(int argc)
+int	control_args(int argc)
 {
 	if (argc > 6 || argc < 5)
 	{
-		printf("The program should be executed as follows:\n");
-		printf("./philo number_of_philosophers time_to_die time_to_eat ");
-		printf("time_to_sleep [number_of_times_each_philosopher_must_eat]\n");
-		return (false);
+		write(ER, "The program should be executed as follows:\n", 43);
+		write(ER, "./philo nbr_of_philosophers time_to_die time_to_eat ", 52);
+		write(ER, "time_to_sleep [must_eat_count]\n", 31);
+		return (1);
 	}
-	return (true);
-}
-
-void	*safe_malloc(size_t bytes)
-{
-	void	*ret;
-
-	ret = malloc((bytes));
-	if (!ret)
-		error_exit("malloc");
-	return (ret);
-}
-
-void	cleanup(t_global *data)
-{
-	unsigned int	i;
-
-	i = -1;
-	while (++i < data->nbr_of_philo)
-		pthread_mutex_destroy(&data->philos[i].philo_mutex);
-	pthread_mutex_destroy(&data->mtx_print);
-	pthread_mutex_destroy(&data->mutex_data);
-	if (data->forks)
-		free(data->forks);
-	if (data->philos)
-		free(data->philos);
-}
-
-bool	simulation_finished(t_global *data)
-{
-	bool	result;
-
-	result = get_bool(&data->mutex_data, &data->end_simul);
-	return (result);
+	return (0);
 }

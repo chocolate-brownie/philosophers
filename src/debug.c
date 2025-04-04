@@ -6,22 +6,21 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:54:52 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/31 17:11:15 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:59:45 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-void	print_data(t_global *data)
+void	print_data(t_data *data)
 {
-	printf("Number of philosophers: %u\n", data->nbr_of_philo);
+	printf(YELLOW "Number of philosophers: %u\n" RESET, data->nbr_of_phils);
 	printf("Time to die: %u\n", data->time_to_die);
 	printf("Time to eat: %u\n", data->time_to_eat);
 	printf("Time to sleep: %u\n", data->time_to_sleep);
-	printf("Must eat count %u\n", data->must_eat_count);
-	printf("Anybody died? Are philos full?: %d\n", data->end_simul);
+	printf("Must eat count %u\n", data->must_eat_times);
 }
-
+/*
 void	write_status_debug(t_status status, t_philo *philo, long elapsed_time)
 {
 	if (status == FORK_ONE && !simulation_finished(philo->global_data))
@@ -40,3 +39,4 @@ void	write_status_debug(t_status status, t_philo *philo, long elapsed_time)
 	else if (status == DIED)
 		printf(RED "%-6ld %d died\n" RESET, elapsed_time, philo->philo_id);
 }
+*/

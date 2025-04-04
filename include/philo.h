@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/03 14:58:19 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/03 19:58:44 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,98 +33,63 @@
 # define RESET "\x1b[0m"
 
 # define PHILO_MAX 200
+# define ER STDERR_FILENO
 # define DEBUG 1
-
-typedef struct s_fork	t_fork;
-typedef struct s_philo	t_philo;
-typedef struct s_global	t_global;
-
-typedef enum e_time
-{
-	SECONDS,
-	MILLISECONDS,
-	MICROSECONDS,
-}						t_time;
 
 typedef enum e_status
 {
 	THINKING,
 	EATING,
 	SLEEPING,
-	FORK_ONE,
-	FORK_TWO,
+	FORK,
 	DIED,
-}						t_status;
+}					t_status;
 
-typedef struct s_fork
+typedef enum e_mtx
 {
-	pthread_mutex_t		mtx_fork;
-	unsigned int		fork_id;
-}						t_fork;
+	FULL,
+	DEAD,
+	MEAL,
+	PRINT,
+}					t_mtx;
+
+typedef struct s_data
+{
+	__uint16_t		nbr_of_phils;
+	__uint32_t		time_to_die;
+	__uint32_t		time_to_eat;
+	__uint32_t		time_to_sleep;
+	__uint32_t		time_to_think;
+	__uint16_t		must_eat_times;
+	struct timeval	simul_start;
+	int				philo_died;
+	__uint16_t		fulled_phils;
+	struct timeval	*last_meal;
+	pthread_mutex_t	*mtx_fork;
+	pthread_mutex_t	*mtx_full;
+	pthread_mutex_t	*mtx_dead;
+	pthread_mutex_t	*mtx_meal;
+	pthread_mutex_t	*mtx_print;
+}					t_data;
 
 typedef struct s_philo
 {
-	unsigned int		philo_id;
-	long				meals_count;
-	bool				full;
-	long				last_meal_time;
-	t_fork				*right_fork;
-	t_fork				*left_fork;
-	pthread_t			thread_id;
-	pthread_mutex_t		philo_mutex;
-	t_global			*global_data;
+	int				id;
+	t_status		status;
+	__uint16_t		num_meals;
+	int				is_full;
+	t_data			*data;
+}					t_philo;
 
-}						t_philo;
+/** error utils */
+long				ft_atol(const char *str);
+void				error_exit(const char *msg);
+int					control_args(int argc);
 
-typedef struct s_global
-{
-	unsigned int		nbr_of_philo;
-	unsigned int		time_to_die;
-	unsigned int		time_to_eat;
-	unsigned int		time_to_sleep;
-	unsigned int		must_eat_count;
-	long				nbr_running_threads;
-	long				start_simul;
-	bool				end_simul;
-	bool				all_threads_ready;
-	pthread_mutex_t		mutex_data;
-	pthread_mutex_t		mtx_print;
-	t_fork				*forks;
-	t_philo				*philos;
-	pthread_t			thread_monitor;
-}						t_global;
+/** philo utils */
+int					init_data(int argc, char *argv[], t_data *data);
 
-void					error_exit(const char *msg);
-long					ft_atol(const char *str);
-bool					control_args(int argc);
-void					cleanup(t_global *data);
-long					get_time(t_time timecode);
-void					ft_usleep(long usec, t_global *data);
-void					*safe_malloc(size_t bytes);
-void					set_bool(pthread_mutex_t *mutex_data, bool *dest,
-							bool value);
-bool					get_bool(pthread_mutex_t *mutex_data, bool *value);
-bool					simulation_finished(t_global *data);
-void					wait_all_threads(t_global *data);
-void					join_threads(t_global *data);
-void					simulation(t_global *data);
-void					print_status(t_status status, t_philo *philo,
-							bool debug);
-void					set_long(pthread_mutex_t *mutex_data, long *dest,
-							long value);
-long					get_long(pthread_mutex_t *mutex_data, long *value);
-void					set_increase_long(pthread_mutex_t *mutex, long *value);
-void					monitoring(t_global *data);
-bool					all_threads_are_running(pthread_mutex_t *mutex,
-							long *threads, unsigned int nbr_of_philo);
-void					calculate_thinking(t_philo *philo);
-void					thinking(t_philo *philo, bool pre_simul);
-/** debugging functions */
-void					print_data(t_global *data);
-void					write_status_debug(t_status status, t_philo *philo,
-							long elapsed_time);
-/** ctrl+c exit clean up */
-void					sigint_handler(int sig);
-void					setup_signal_handling(t_global *data);
+/** debugging */
+void				print_data(t_data *data);
 
 #endif
