@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:54:52 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/03 19:59:45 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/07 02:31:22 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,32 @@
 
 void	print_data(t_data *data)
 {
-	printf(YELLOW "Number of philosophers: %u\n" RESET, data->nbr_of_phils);
+	printf("-----------------------------------\n");
+	printf("Number of philosophers: %u\n", data->nbr_of_phils);
 	printf("Time to die: %u\n", data->time_to_die);
 	printf("Time to eat: %u\n", data->time_to_eat);
 	printf("Time to sleep: %u\n", data->time_to_sleep);
 	printf("Must eat count %u\n", data->must_eat_times);
+	printf("Time to think: %u\n", data->time_to_think);
+	printf("-----------------------------------\n");
 }
-/*
-void	write_status_debug(t_status status, t_philo *philo, long elapsed_time)
+
+void	write_status_debug(t_status status, t_philo *philo,
+		__uint32_t elapsed_time)
 {
-	if (status == FORK_ONE && !simulation_finished(philo->global_data))
-		printf("%-6ld %d has taken 1st fork " CYAN "[id: %u]\n" RESET,
-			elapsed_time, philo->philo_id, philo->right_fork->fork_id);
-	else if (status == FORK_TWO && !simulation_finished(philo->global_data))
-		printf("%-6ld %d has taken 2nd fork " CYAN "[id: %u]\n" RESET,
-			elapsed_time, philo->philo_id, philo->left_fork->fork_id);
-	else if (status == EATING && !simulation_finished(philo->global_data))
-		printf("%-6ld %d is eating " YELLOW "[meals eaten: %ld]\n" RESET,
-			elapsed_time, philo->philo_id, philo->meals_count);
-	else if (status == THINKING && !simulation_finished(philo->global_data))
-		printf("%-6ld %d is thinking\n", elapsed_time, philo->philo_id);
-	else if (status == SLEEPING && !simulation_finished(philo->global_data))
-		printf("%-6ld %d is sleeping\n", elapsed_time, philo->philo_id);
+	if (status == FORK_ONE)
+		printf("%05u %d has taken 1st fork " CYAN "[id: %u]\n" RESET,
+			elapsed_time, philo->id, philo->data->fork_id);
+	else if (status == FORK_TWO)
+		printf("%05u %d has taken 2nd fork " CYAN "[id: %u]\n" RESET,
+			elapsed_time, philo->id, philo->data->fork_id);
+	else if (status == EATING)
+		printf("%05u %d is eating " YELLOW "[meals eaten: %u]\n" RESET,
+			elapsed_time, philo->id, philo->num_meals + 1);
+	else if (status == THINKING)
+		printf("%05u %d is thinkin\n", elapsed_time, philo->id);
+	else if (status == SLEEPING)
+		printf("%05u %d is sleeping\n", elapsed_time, philo->id);
 	else if (status == DIED)
-		printf(RED "%-6ld %d died\n" RESET, elapsed_time, philo->philo_id);
+		printf(RED "%05u %d died\n" RESET, elapsed_time, philo->id);
 }
-*/

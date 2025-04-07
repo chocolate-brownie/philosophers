@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 21:11:53 by mgodawat          #+#    #+#              #
-#    Updated: 2025/04/03 19:44:33 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/04/07 02:22:28 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -45,7 +45,8 @@ HELGRIND_FLAGS = --tool=helgrind
 DRD_FLAGS = --tool=drd
 
 # Source files
-SRC_FILES = main.c ft_atol.c err_utils.c debug.c phils_utils.c\
+SRC_FILES = main.c ft_atol.c err_utils.c debug.c phils_utils.c sig_exit.c \
+			time_utils.c routine.c\
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
 SRCS = $(addprefix $(SRC_DIR)/, $(SRC_FILES))

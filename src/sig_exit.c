@@ -6,14 +6,14 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/02 22:13:07 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/02 22:30:00 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/05 13:14:19 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/philo.h"
+/* #include "../include/philo.h"
 #include <signal.h>
 
-static t_global	*data_ptr = NULL;
+static t_data	*data_ptr = NULL;
 
 void	sigint_handler(int sig)
 {
@@ -27,8 +27,8 @@ void	sigint_handler(int sig)
 	}
 }
 
-void	setup_signal_handling(t_global *data)
+void	setup_signal_handling(t_data *data)
 {
 	data_ptr = data;
 	signal(SIGINT, sigint_handler);
-}
+} */
