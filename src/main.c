@@ -6,14 +6,13 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 02:25:12 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/07 19:18:32 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-/*
-static void	*monitor_routine(void *arg)
+void	*monitor_routine(void *arg)
 {
 	t_data		*data;
 	__uint16_t	i;
@@ -21,14 +20,15 @@ static void	*monitor_routine(void *arg)
 	data = (t_data *)arg;
 	while (1)
 	{
-		i = -1;
-		while (++i < data->nbr_of_phils)
+		i = 0;
+		while (i < data->nbr_of_phils)
 		{
-			if (check_starved_time(data, i))
+			if (check_starved_time(i, data))
 			{
 				philo_dies(data);
 				return (NULL);
 			}
+			i++;
 		}
 		if (check_all_full(data))
 		{
@@ -38,25 +38,23 @@ static void	*monitor_routine(void *arg)
 	}
 	return (NULL);
 }
-*/
 
 static void	*start_routine(void *arg)
 {
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	if (philo->id % 2 == 0)
+	if (!(philo->id % 2))
 		ft_usleep(philo->data->time_to_eat / 2, philo->data);
 	while (1)
 	{
-		if (check_dead(philo->data)
-			|| (philo->num_meals == philo->data->must_eat_times))
+		if (check_dead(philo->data))
 			break ;
 		if (philo->status == THINKING)
 			thinking(philo);
 		else if (philo->status == EATING)
 		{
-			if (!(philo->id % 2))
+			if (philo->id % 2)
 				eat_with_fork_left(philo);
 			else
 				eat_with_fork_right(philo);
@@ -74,9 +72,9 @@ static int	init_threads(t_data *data, pthread_t *thread)
 	__uint8_t	i;
 	t_philo		*philo;
 
-	/* 	printf(YELLOW "[DEBUG] Init threads...\n" RESET); */
 	i = -1;
-	print_data(data);
+	if (DEBUG == 2)
+		print_data(data);
 	while (++i < data->nbr_of_phils)
 	{
 		philo = malloc(sizeof(t_philo));
@@ -85,14 +83,10 @@ static int	init_threads(t_data *data, pthread_t *thread)
 		init_philo(philo, i, data);
 		if (pthread_create(&thread[i], NULL, &start_routine, philo))
 			return (2);
-		/* printf(GREEN "[DTHREADS] Created thread
-			%lu for philosopher:%d\n" RESET,
-			(unsigned long)thread[i], i + 1); */
 	}
-	/* if (pthread_create(&thread[i], NULL, &monitor_routine, data))
-		return (2); */
+	if (pthread_create(&thread[i], NULL, &monitor_routine, data))
+		return (2);
 	return (0);
-	/* 	printf(GREEN "[DEBUG] Init threads...\n" RESET); */
 }
 
 static void	join_threads(t_data *data, pthread_t *thread)
@@ -100,11 +94,8 @@ static void	join_threads(t_data *data, pthread_t *thread)
 	__uint8_t	i;
 
 	i = -1;
-	while (++i < data->nbr_of_phils)
+	while (++i < data->nbr_of_phils + 1)
 	{
-		/* printf(RED "[DTHREADS] Joining thread
-			%lu for philosopher:%d\n" RESET,
-			(unsigned long)thread[i], i + 1); */
 		if (pthread_join(thread[i], NULL))
 			return ;
 	}
@@ -124,7 +115,7 @@ int	main(int argc, char *argv[])
 		return (1);
 	if (init_data(argc, argv, &data))
 		return (2);
-	thread = malloc(sizeof(pthread_t) * (data.nbr_of_phils));
+	thread = malloc(sizeof(pthread_t) * (data.nbr_of_phils + 1));
 	if (!thread)
 		return (free(data.last_meal), 2);
 	mtx_fork = malloc(sizeof(pthread_mutex_t) * data.nbr_of_phils);
@@ -135,4 +126,5 @@ int	main(int argc, char *argv[])
 	if (err)
 		philo_dies(&data);
 	join_threads(&data, thread);
+	destroy_mutex(&data, mtx_fork, mtx);
 }

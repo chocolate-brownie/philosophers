@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:31:20 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 02:30:31 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/07 19:49:12 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,8 @@
 
 int	init_data(int argc, char *argv[], t_data *data)
 {
-	data->nbr_of_phils = ft_atol(argv[1]);
+	if ((data->nbr_of_phils = ft_atol(argv[1])) >= PHILO_MAX)
+		return (write(ER, "Philo Max is 200\n", 17), 1);
 	data->time_to_die = ft_atol(argv[2]);
 	data->time_to_eat = ft_atol(argv[3]);
 	data->time_to_sleep = ft_atol(argv[4]);
@@ -43,7 +44,6 @@ void	init_mutexes(t_data *data, pthread_mutex_t *mtx_fork,
 {
 	__uint8_t	i;
 
-	printf(YELLOW "[DEBUG] Init mutexes...\n" RESET);
 	i = -1;
 	while (++i < data->nbr_of_phils)
 		pthread_mutex_init(&mtx_fork[i], NULL);
@@ -56,7 +56,6 @@ void	init_mutexes(t_data *data, pthread_mutex_t *mtx_fork,
 	data->mtx_dead = mtx + DEAD;
 	data->mtx_meal = mtx + MEAL;
 	data->mtx_print = mtx + PRINT;
-	printf(GREEN "[DEBUG] Init mutexes...\n" RESET);
 }
 
 void	init_philo(t_philo *philo, int i, t_data *data)
@@ -66,15 +65,9 @@ void	init_philo(t_philo *philo, int i, t_data *data)
 	data->last_meal[i] = data->simul_start;
 	philo->num_meals = 0;
 	philo->is_full = 0;
-	data->fork_id = i;
 	philo->data = data;
-	/* printf("-----------------------------------\n");
-	printf("Philo id: %u [fork in front: %u]\n", philo->id, data->fork_id);
-	printf("Philo status: %u\n", philo->status);
-	printf(CYAN "Philo last meal time: %.6f seconds\n" RESET,
-		data->last_meal[i].tv_sec + data->last_meal[i].tv_usec / 1000000.0);
-	printf("Philo num of meals: %u\n", philo->num_meals);
-	printf("Philo full: %u\n", philo->is_full); */
+	if (DEBUG == 2)
+		debug_init_philo(philo, data, i);
 }
 
 int	check_dead(t_data *data)
@@ -89,7 +82,7 @@ int	check_dead(t_data *data)
 	return (i);
 }
 
-void	print_message(t_philo *philo, t_status opcode)
+void	print_message(t_philo *philo, t_status opcode, int fork_id)
 {
 	__uint32_t	elapsed;
 	t_data		*data;
@@ -97,8 +90,8 @@ void	print_message(t_philo *philo, t_status opcode)
 	data = philo->data;
 	pthread_mutex_lock(data->mtx_print);
 	elapsed = elapsed_time(&data->simul_start);
-	if (DEBUG == 1)
-		write_status_debug(opcode, philo, elapsed);
+	if (DEBUG == 1 || DEBUG == 2)
+		write_status_debug(opcode, philo, elapsed, fork_id);
 	else
 	{
 		if (opcode == FORK_ONE || opcode == FORK_TWO)

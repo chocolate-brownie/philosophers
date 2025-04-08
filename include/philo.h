@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 01:40:17 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/07 19:39:16 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 # define PHILO_MAX 200
 # define ER STDERR_FILENO
-# define DEBUG 1
+# define DEBUG 0
 
 typedef enum e_status
 {
@@ -62,7 +62,6 @@ typedef struct s_data
 	__uint32_t		time_to_think;
 	__uint16_t		must_eat_times;
 	__uint16_t		fulled_phils;
-	__uint8_t		fork_id;
 	struct timeval	simul_start;
 	int				philo_died;
 	struct timeval	*last_meal;
@@ -93,18 +92,22 @@ int					init_data(int argc, char *argv[], t_data *data);
 void				init_mutexes(t_data *data, pthread_mutex_t *mtx_fork,
 						pthread_mutex_t mtx[4]);
 void				init_philo(t_philo *philo, int i, t_data *data);
-void				print_message(t_philo *philo, t_status opcode);
+void				print_message(t_philo *philo, t_status opcode, int fork_id);
 void				thinking(t_philo *philo);
 int					eat_with_fork_right(t_philo *philo);
 int					eat_with_fork_left(t_philo *philo);
 int					philo_one(t_philo *philo, __uint16_t fork_index);
 void				sleeping(t_philo *philo);
-int					check_starved_time(t_data *data, __uint16_t id);
+int					check_starved_time(int id, t_data *data);
 int					check_all_full(t_data *data);
+void				destroy_mutex(t_data *data, pthread_mutex_t *mtx_fork,
+						pthread_mutex_t mtx[4]);
 
 /** debugging */
 void				print_data(t_data *data);
 void				write_status_debug(t_status status, t_philo *philo,
-						__uint32_t elapsed_time);
+						__uint32_t elapsed_time, int fork_id);
+void				debug_init_philo(t_philo *philo, t_data *data,
+						__uint16_t i);
 
 #endif
