@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 19:39:16 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:28:47 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 # define PHILO_MAX 200
 # define ER STDERR_FILENO
-# define DEBUG 0
+# define DEBUG 1
 
 typedef enum e_status
 {

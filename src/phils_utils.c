@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:31:20 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 19:49:12 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/09 18:25:59 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 int	init_data(int argc, char *argv[], t_data *data)
 {
-	if ((data->nbr_of_phils = ft_atol(argv[1])) >= PHILO_MAX)
-		return (write(ER, "Philo Max is 200\n", 17), 1);
+	/* if ((data->nbr_of_phils = ft_atol(argv[1])) >= PHILO_MAX)
+		return (write(ER, "Philo Max is 200\n", 17), 1); */
+	data->nbr_of_phils = ft_atol(argv[1]);
 	data->time_to_die = ft_atol(argv[2]);
 	data->time_to_eat = ft_atol(argv[3]);
 	data->time_to_sleep = ft_atol(argv[4]);
@@ -24,7 +25,11 @@ int	init_data(int argc, char *argv[], t_data *data)
 		data->time_to_think = 2 * data->time_to_eat - data->time_to_sleep;
 	data->must_eat_times = 0;
 	if (argc == 6)
+	{
 		data->must_eat_times = ft_atol(argv[5]);
+		if (data->must_eat_times == 0)
+			return (write(1, "Error: Optional argument is 0\n", 30), 1);
+	}
 	gettimeofday(&data->simul_start, NULL);
 	data->philo_died = 0;
 	data->fulled_phils = 0;
