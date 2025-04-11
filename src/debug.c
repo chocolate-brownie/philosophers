@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 18:54:52 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/11 12:43:25 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:04:15 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,8 @@ void	check_meal_completion_status(t_data *data)
 	}
 	else if (data->must_eat_times > 0)
 	{
-		printf(RED "INCOMPLETE: Only"
-					" %u/%u philosophers completed all meals\n" RESET,
-				data->fulled_phils,
-				data->nbr_of_phils);
+		printf(RED "INCOMPLETE: %u/%u \n" RESET, data->fulled_phils,
+			data->nbr_of_phils);
 	}
 	else
 	{
