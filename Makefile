@@ -6,7 +6,7 @@
 #    By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/04/09 18:41:58 by mgodawat          #+#    #+#              #
-#    Updated: 2025/04/09 18:42:00 by mgodawat         ###   ########.fr        #
+#    Updated: 2025/04/11 13:02:01 by mgodawat         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR)
 
 # Source files
-SRC_FILES = main.c ft_atol.c err_utils.c debug.c phils_utils.c sig_exit.c \
+SRC_FILES = main.c ft_atol.c err_utils.c debug.c phils_utils.c \
 			time_utils.c routine.c monitor_utils.c \
 
 OBJ_FILES = $(SRC_FILES:.c=.o)
