@@ -193,10 +193,8 @@ This guide covers the unsigned integer types in C (`__uint8_t` through `__uint32
 
 # Testing Tools for Dining Philosophers
 
-## Valgrind Tools
-
+## Pasring check
 ```bash
-
 # invalid input to check whitespaces
 ./philo 4 \"\ 410 200 200    # To test with " 410" including the quotes
 ./philo 4 \\\ 410 200 200     # To test with \ 410 including the backslash
@@ -215,7 +213,11 @@ This guide covers the unsigned integer types in C (`__uint8_t` through `__uint32
 ./philo 4 410 200 200 5 extra # Too many arguments
 ./philo 4a 410 200 200        # Non-numeric input
 ./philo 4 410 200 200 abc     # Non-numeric meal count
+```
 
+## Valgrind Tools
+
+```bash
 # Memory errors and leaks
 valgrind --leak-check=full ./philo 5 800 200 200
 
