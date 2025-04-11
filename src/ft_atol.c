@@ -5,56 +5,57 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/03/25 11:15:13 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/03/25 17:26:10 by mgodawat         ###   ########.fr       */
+/*   Created: 2025/04/11 12:50:39 by mgodawat          #+#    #+#             */
+/*   Updated: 2025/04/11 12:51:11 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/philo.h"
 
-static inline bool	ft_isspace(char c)
+static int	parse_number(const char *nptr, int i, long sign, long *result)
 {
-	return (c == ' ' || (c >= 9 && c <= 13));
+	long	num;
+
+	num = 0;
+	if (!(nptr[i] >= '0' && nptr[i] <= '9'))
+		return (0);
+	while (nptr[i] >= '0' && nptr[i] <= '9')
+	{
+		if (num > (LONG_MAX - (nptr[i] - '0')) / 10)
+			return (0);
+		num = num * 10 + (nptr[i] - '0');
+		i++;
+	}
+	if (nptr[i] != '\0')
+		return (0);
+	*result = num * sign;
+	return (1);
 }
 
-static inline bool	ft_isdigit(char c)
+int	ft_is_valid_int(const char *nptr, long *result)
 {
-	return (c >= '0' && c <= '9');
-}
-
-static const char	*validate_input(const char *str)
-{
-	const char	*valid_number;
-	int			length;
-
-	length = 0;
-	while (ft_isspace(*str))
-		++str;
-	if (*str == '+')
-		++str;
-	else if (*str == '-')
-		error_exit("You've entered a negative number");
-	if (!ft_isdigit(*str))
-		error_exit("You've entered a non-digit character");
-	valid_number = str;
-	while (ft_isdigit(*str++))
-		length++;
-	if (length > 10)
-		error_exit("Range overflow (INTMAX is the limit)");
-	return (valid_number);
-}
-
-long	ft_atol(const char *str)
-{
+	int		i;
 	long	sign;
-	long	number;
 
+	i = 0;
 	sign = 1;
-	number = 0;
-	str = validate_input(str);
-	while (ft_isdigit(*str))
-		number = (number * 10) + (*str++ - '0');
-	if (number > INT_MAX)
-		error_exit("Range overflow (INTMAX is the limit)");
-	return (number * sign);
+	while (nptr[i] == ' ' || nptr[i] == '\t' || nptr[i] == '\n'
+		|| nptr[i] == '\r' || nptr[i] == '\f' || nptr[i] == '\v')
+		i++;
+	if (nptr[i] == '+' || nptr[i] == '-')
+	{
+		if (nptr[i] == '-')
+			sign = -1;
+		i++;
+	}
+	return (parse_number(nptr, i, sign, result));
+}
+
+long	ft_atol(const char *nptr)
+{
+	long	result;
+
+	if (!ft_is_valid_int(nptr, &result))
+		return (0);
+	return (result);
 }

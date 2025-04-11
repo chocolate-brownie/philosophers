@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/09 18:28:47 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:57:39 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 
 # define PHILO_MAX 200
 # define ER STDERR_FILENO
-# define DEBUG 1
+# define DEBUG 0
 
 typedef enum e_status
 {
@@ -82,17 +82,17 @@ typedef struct s_philo
 }					t_philo;
 
 long				ft_atol(const char *str);
-void				error_exit(const char *msg);
-int					control_args(int argc);
-void				philo_dies(t_data *data);
+int					ft_is_valid_int(const char *nptr, long *result);
+int					control_args(int argc, char *argv[]);
+void				turn_dead(t_data *data);
 void				ft_usleep(__uint32_t time, t_data *data);
 __uint32_t			elapsed_time(struct timeval *ref);
-int					check_dead(t_data *data);
+int					check_sb_dead(t_data *data);
 int					init_data(int argc, char *argv[], t_data *data);
 void				init_mutexes(t_data *data, pthread_mutex_t *mtx_fork,
 						pthread_mutex_t mtx[4]);
 void				init_philo(t_philo *philo, int i, t_data *data);
-void				print_message(t_philo *philo, t_status opcode, int fork_id);
+void				print_message(t_data *data, int id, t_status action);
 void				thinking(t_philo *philo);
 int					eat_with_fork_right(t_philo *philo);
 int					eat_with_fork_left(t_philo *philo);
@@ -105,9 +105,8 @@ void				destroy_mutex(t_data *data, pthread_mutex_t *mtx_fork,
 
 /** debugging */
 void				print_data(t_data *data);
-void				write_status_debug(t_status status, t_philo *philo,
-						__uint32_t elapsed_time, int fork_id);
 void				debug_init_philo(t_philo *philo, t_data *data,
 						__uint16_t i);
+void				check_meal_completion_status(t_data *data);
 
 #endif

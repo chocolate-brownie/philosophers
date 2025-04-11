@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 21:23:20 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 16:51:26 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:06:35 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,17 @@
 
 void	sleeping(t_philo *philo)
 {
-	print_message(philo, SLEEPING, -1);
+	int	i;
+
+	i = philo->id;
+	print_message(philo->data, i, SLEEPING);
 	ft_usleep(philo->data->time_to_sleep, philo->data);
 	philo->status = THINKING;
 }
 
 void	thinking(t_philo *philo)
 {
-	print_message(philo, THINKING, -1);
+	print_message(philo->data, philo->id, THINKING);
 	if (philo->data->nbr_of_phils % 2)
 		ft_usleep(philo->data->time_to_think, philo->data);
 	philo->status = EATING;
@@ -29,7 +32,9 @@ void	thinking(t_philo *philo)
 
 static void	eating(t_philo *philo)
 {
-	print_message(philo, EATING, -1);
+	if (check_sb_dead(philo->data))
+		return ;
+	print_message(philo->data, philo->id, EATING);
 	pthread_mutex_lock(philo->data->mtx_meal);
 	gettimeofday(&philo->data->last_meal[philo->id - 1], NULL);
 	pthread_mutex_unlock(philo->data->mtx_meal);
@@ -54,23 +59,23 @@ int	eat_with_fork_left(t_philo *philo)
 
 	left_fork = philo->id - 1;
 	right_fork = philo->id % philo->data->nbr_of_phils;
-	pthread_mutex_lock(philo->data->mtx_fork + left_fork);
-	if (check_dead(philo->data))
-		return (pthread_mutex_unlock(philo->data->mtx_fork + left_fork), 1);
-	print_message(philo, FORK_ONE, left_fork);
+	pthread_mutex_lock(&philo->data->mtx_fork[left_fork]);
+	if (check_sb_dead(philo->data))
+		return (pthread_mutex_unlock(&philo->data->mtx_fork[left_fork]), 1);
+	print_message(philo->data, philo->id, FORK_TWO);
 	if (philo_one(philo, left_fork) != 0)
 		return (1);
-	pthread_mutex_lock(philo->data->mtx_fork + right_fork);
-	if (check_dead(philo->data))
+	pthread_mutex_lock(&philo->data->mtx_fork[right_fork]);
+	if (check_sb_dead(philo->data))
 	{
-		pthread_mutex_unlock(philo->data->mtx_fork + left_fork);
-		pthread_mutex_unlock(philo->data->mtx_fork + right_fork);
+		pthread_mutex_unlock(&philo->data->mtx_fork[left_fork]);
+		pthread_mutex_unlock(&philo->data->mtx_fork[right_fork]);
 		return (1);
 	}
-	print_message(philo, FORK_TWO, right_fork);
+	print_message(philo->data, philo->id, FORK_ONE);
 	eating(philo);
-	pthread_mutex_unlock(philo->data->mtx_fork + left_fork);
-	pthread_mutex_unlock(philo->data->mtx_fork + right_fork);
+	pthread_mutex_unlock(&philo->data->mtx_fork[left_fork]);
+	pthread_mutex_unlock(&philo->data->mtx_fork[right_fork]);
 	return (0);
 }
 
@@ -81,20 +86,20 @@ int	eat_with_fork_right(t_philo *philo)
 
 	left_fork = philo->id - 1;
 	right_fork = philo->id % philo->data->nbr_of_phils;
-	pthread_mutex_lock(philo->data->mtx_fork + right_fork);
-	if (check_dead(philo->data))
-		return (pthread_mutex_unlock(philo->data->mtx_fork + right_fork), 1);
-	print_message(philo, FORK_ONE, right_fork);
-	pthread_mutex_lock(philo->data->mtx_fork + left_fork);
-	if (check_dead(philo->data))
+	pthread_mutex_lock(&philo->data->mtx_fork[right_fork]);
+	if (check_sb_dead(philo->data))
+		return (pthread_mutex_unlock(&philo->data->mtx_fork[right_fork]), 1);
+	print_message(philo->data, philo->id, FORK_ONE);
+	pthread_mutex_lock(&philo->data->mtx_fork[left_fork]);
+	if (check_sb_dead(philo->data))
 	{
-		pthread_mutex_unlock(philo->data->mtx_fork + right_fork);
-		pthread_mutex_unlock(philo->data->mtx_fork + left_fork);
+		pthread_mutex_unlock(&philo->data->mtx_fork[right_fork]);
+		pthread_mutex_unlock(&philo->data->mtx_fork[left_fork]);
 		return (1);
 	}
-	print_message(philo, FORK_TWO, left_fork);
+	print_message(philo->data, philo->id, FORK_TWO);
 	eating(philo);
-	pthread_mutex_unlock(philo->data->mtx_fork + right_fork);
-	pthread_mutex_unlock(philo->data->mtx_fork + left_fork);
+	pthread_mutex_unlock(&philo->data->mtx_fork[right_fork]);
+	pthread_mutex_unlock(&philo->data->mtx_fork[left_fork]);
 	return (0);
 }

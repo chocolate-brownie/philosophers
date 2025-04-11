@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:31:20 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/09 18:25:59 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:28:19 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 
 int	init_data(int argc, char *argv[], t_data *data)
 {
-	/* if ((data->nbr_of_phils = ft_atol(argv[1])) >= PHILO_MAX)
-		return (write(ER, "Philo Max is 200\n", 17), 1); */
 	data->nbr_of_phils = ft_atol(argv[1]);
 	data->time_to_die = ft_atol(argv[2]);
 	data->time_to_eat = ft_atol(argv[3]);
@@ -25,11 +23,7 @@ int	init_data(int argc, char *argv[], t_data *data)
 		data->time_to_think = 2 * data->time_to_eat - data->time_to_sleep;
 	data->must_eat_times = 0;
 	if (argc == 6)
-	{
 		data->must_eat_times = ft_atol(argv[5]);
-		if (data->must_eat_times == 0)
-			return (write(1, "Error: Optional argument is 0\n", 30), 1);
-	}
 	gettimeofday(&data->simul_start, NULL);
 	data->philo_died = 0;
 	data->fulled_phils = 0;
@@ -47,20 +41,20 @@ int	init_data(int argc, char *argv[], t_data *data)
 void	init_mutexes(t_data *data, pthread_mutex_t *mtx_fork,
 		pthread_mutex_t mtx[4])
 {
-	__uint8_t	i;
+	__uint16_t	i;
 
 	i = -1;
 	while (++i < data->nbr_of_phils)
 		pthread_mutex_init(&mtx_fork[i], NULL);
-	pthread_mutex_init(mtx + FULL, NULL);
-	pthread_mutex_init(mtx + DEAD, NULL);
-	pthread_mutex_init(mtx + MEAL, NULL);
-	pthread_mutex_init(mtx + PRINT, NULL);
+	pthread_mutex_init(&mtx[FULL], NULL);
+	pthread_mutex_init(&mtx[DEAD], NULL);
+	pthread_mutex_init(&mtx[MEAL], NULL);
+	pthread_mutex_init(&mtx[PRINT], NULL);
 	data->mtx_fork = mtx_fork;
-	data->mtx_full = mtx + FULL;
-	data->mtx_dead = mtx + DEAD;
-	data->mtx_meal = mtx + MEAL;
-	data->mtx_print = mtx + PRINT;
+	data->mtx_full = &mtx[FULL];
+	data->mtx_dead = &mtx[DEAD];
+	data->mtx_meal = &mtx[MEAL];
+	data->mtx_print = &mtx[PRINT];
 }
 
 void	init_philo(t_philo *philo, int i, t_data *data)
@@ -71,44 +65,47 @@ void	init_philo(t_philo *philo, int i, t_data *data)
 	philo->num_meals = 0;
 	philo->is_full = 0;
 	philo->data = data;
-	if (DEBUG == 2)
+	if (DEBUG == 1)
 		debug_init_philo(philo, data, i);
 }
 
-int	check_dead(t_data *data)
+void	destroy_mutex(t_data *data, pthread_mutex_t *mtx_fork,
+		pthread_mutex_t mtx[4])
 {
-	int	i;
+	__uint16_t	i;
 
-	i = 0;
-	pthread_mutex_lock(data->mtx_dead);
-	if (data->philo_died)
-		i = 1;
-	pthread_mutex_unlock(data->mtx_dead);
-	return (i);
+	i = -1;
+	while (++i < data->nbr_of_phils)
+		pthread_mutex_destroy(&mtx_fork[i]);
+	pthread_mutex_destroy(&mtx[FULL]);
+	pthread_mutex_destroy(&mtx[DEAD]);
+	pthread_mutex_destroy(&mtx[MEAL]);
+	pthread_mutex_destroy(&mtx[PRINT]);
+	free(mtx_fork);
 }
 
-void	print_message(t_philo *philo, t_status opcode, int fork_id)
+void	print_message(t_data *data, int id, t_status action)
 {
-	__uint32_t	elapsed;
-	t_data		*data;
-
-	data = philo->data;
 	pthread_mutex_lock(data->mtx_print);
-	elapsed = elapsed_time(&data->simul_start);
-	if (DEBUG == 1 || DEBUG == 2)
-		write_status_debug(opcode, philo, elapsed, fork_id);
-	else
+	if (check_sb_dead(data) && action != DIED)
 	{
-		if (opcode == FORK_ONE || opcode == FORK_TWO)
-			printf("%05u %d has taken a fork\n", elapsed, philo->id);
-		else if (opcode == EATING)
-			printf("%05u %d eating\n", elapsed, philo->id);
-		else if (opcode == THINKING)
-			printf("%05u %d thinking\n", elapsed, philo->id);
-		else if (opcode == SLEEPING)
-			printf("%05u %d sleeping\n", elapsed, philo->id);
-		else if (opcode == DIED)
-			printf(RED "%05u %d died\n" RESET, elapsed, philo->id);
+		pthread_mutex_unlock(data->mtx_print);
+		return ;
 	}
+	if (action == THINKING)
+		printf(YELLOW "%05u %2d is thinking\n" RESET,
+			elapsed_time(&data->simul_start), id);
+	else if (action == EATING)
+		printf(PINK "%05u %2d is eating\n" RESET,
+			elapsed_time(&data->simul_start), id);
+	else if (action == SLEEPING)
+		printf(BLUE "%05u %2d is sleeping\n" RESET,
+			elapsed_time(&data->simul_start), id);
+	else if (action == FORK_ONE || action == FORK_TWO)
+		printf("%05u %2d has taken a fork\n", elapsed_time(&data->simul_start),
+			id);
+	else if (action == DIED)
+		printf(RED "%05u %2d died\n" RESET, elapsed_time(&data->simul_start),
+			id);
 	pthread_mutex_unlock(data->mtx_print);
 }

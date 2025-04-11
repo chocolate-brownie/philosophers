@@ -190,3 +190,50 @@ This guide covers the unsigned integer types in C (`__uint8_t` through `__uint32
    - Bit shifting operations might behave differently depending on type size
    - `(1 << 8)` is 256 for 16-bit and 32-bit types, but 0 for an 8-bit type due to overflow
 
+
+# Testing Tools for Dining Philosophers
+
+## Valgrind Tools
+
+```bash
+
+./philo 4 \"\ 410 200 200    # To test with " 410" including the quotes
+./philo 4 \\\ 410 200 200     # To test with \ 410 including the backslash
+./philo 4 \'\ 410 200 200    # To test with ' 410' including the quotes
+
+# Memory errors and leaks
+valgrind --leak-check=full ./philo 5 800 200 200
+
+# Thread race conditions
+valgrind --tool=helgrind ./philo 5 800 200 200 
+
+# Data race detector (alternative to helgrind)
+valgrind --tool=drd ./philo 5 800 200 200
+```
+
+## Address & Thread Sanitizers
+
+```bash
+# Compile with sanitizers
+gcc -fsanitize=address -g *.c -o philo_asan
+gcc -fsanitize=thread -g *.c -o philo_tsan
+
+# Run with sanitizers
+./philo_asan 5 800 200 200
+./philo_tsan 5 800 200 200
+```
+
+## Stress Testing
+
+```bash
+# Run rapid eating cycles
+./philo 10 100 20 20 10 
+
+# Test death conditions
+./philo 4 310 300 100
+
+# Test odd-even patterns
+./philo 3 800 200 200
+./philo 4 800 200 200
+```
+

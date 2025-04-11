@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 20:24:17 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/07 19:18:32 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 12:26:30 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ void	*monitor_routine(void *arg)
 		{
 			if (check_starved_time(i, data))
 			{
-				philo_dies(data);
+				turn_dead(data);
 				return (NULL);
 			}
 			i++;
 		}
 		if (check_all_full(data))
 		{
-			philo_dies(data);
+			turn_dead(data);
 			return (NULL);
 		}
 	}
@@ -48,7 +48,7 @@ static void	*start_routine(void *arg)
 		ft_usleep(philo->data->time_to_eat / 2, philo->data);
 	while (1)
 	{
-		if (check_dead(philo->data))
+		if (check_sb_dead(philo->data))
 			break ;
 		if (philo->status == THINKING)
 			thinking(philo);
@@ -69,11 +69,11 @@ static void	*start_routine(void *arg)
 
 static int	init_threads(t_data *data, pthread_t *thread)
 {
-	__uint8_t	i;
+	__uint16_t	i;
 	t_philo		*philo;
 
 	i = -1;
-	if (DEBUG == 2)
+	if (DEBUG == 1)
 		print_data(data);
 	while (++i < data->nbr_of_phils)
 	{
@@ -111,7 +111,7 @@ int	main(int argc, char *argv[])
 	pthread_mutex_t	mtx[4];
 	int				err;
 
-	if (control_args(argc))
+	if (control_args(argc, argv))
 		return (1);
 	if (init_data(argc, argv, &data))
 		return (2);
@@ -124,7 +124,9 @@ int	main(int argc, char *argv[])
 	init_mutexes(&data, mtx_fork, mtx);
 	err = init_threads(&data, thread);
 	if (err)
-		philo_dies(&data);
+		turn_dead(&data);
 	join_threads(&data, thread);
+	if (DEBUG == 1)
+		check_meal_completion_status(&data);
 	destroy_mutex(&data, mtx_fork, mtx);
 }

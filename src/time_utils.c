@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 21:12:46 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/04 21:17:39 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 11:50:06 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	ft_usleep(__uint32_t time, t_data *data)
 	gettimeofday(&current, NULL);
 	while (elapsed_time(&current) < time)
 	{
-		if (check_dead(data))
+		if (check_sb_dead(data))
 			break ;
 		usleep(100);
 	}
