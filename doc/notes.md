@@ -203,18 +203,18 @@ This guide covers the unsigned integer types in C (`__uint8_t` through `__uint32
 ./philo 4 \'\ 410 200 200    # To test with ' 410' including the quotes
 
 # invalid inputs to check parsing
-./philo 0 410 200 200         // Zero philosophers
-./philo -5 410 200 200        // Negative philosophers
-./philo 201 410 200 200       // Exceeds PHILO_MAX
-./philo 4 0 200 200           // Zero time_to_die
-./philo 4 -100 200 200        // Negative time
-./philo 4 4294967296 200 200  // Exceeds UINT32_MAX (time_to_die)
-./philo 4 410 4294967296 200  // Exceeds UINT32_MAX (time_to_eat)
-./philo 65536 410 200 200     // Exceeds UINT16_MAX (philosophers)
-./philo 4 410 200             // Too few arguments
-./philo 4 410 200 200 5 extra // Too many arguments
-./philo 4a 410 200 200        // Non-numeric input
-./philo 4 410 200 200 abc     // Non-numeric meal count
+./philo 0 410 200 200         # Zero philosophers
+./philo -5 410 200 200        # Negative philosophers
+./philo 201 410 200 200       # Exceeds PHILO_MAX
+./philo 4 0 200 200           # Zero time_to_die
+./philo 4 -100 200 200        # Negative time
+./philo 4 4294967296 200 200  # Exceeds UINT32_MAX (time_to_die)
+./philo 4 410 4294967296 200  # Exceeds UINT32_MAX (time_to_eat)
+./philo 65536 410 200 200     # Exceeds UINT16_MAX (philosophers)
+./philo 4 410 200             # Too few arguments
+./philo 4 410 200 200 5 extra # Too many arguments
+./philo 4a 410 200 200        # Non-numeric input
+./philo 4 410 200 200 abc     # Non-numeric meal count
 
 # Memory errors and leaks
 valgrind --leak-check=full ./philo 5 800 200 200
