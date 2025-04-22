@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/11 12:50:39 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/11 12:51:11 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:00:43 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,11 @@ static int	parse_number(const char *nptr, int i, long sign, long *result)
 		return (0);
 	*result = num * sign;
 	return (1);
+}
+
+int	is_valid_range(long val, long min, long max)
+{
+	return (val >= min && val <= max);
 }
 
 int	ft_is_valid_int(const char *nptr, long *result)

@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/03 19:31:20 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/11 12:28:19 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 13:56:53 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 int	init_data(int argc, char *argv[], t_data *data)
 {
 	data->nbr_of_phils = ft_atol(argv[1]);
+	if (data->nbr_of_phils > PHILO_MAX)
+		return (write(ER, "[Error]: PHILO_MAX\n", 19), 1);
 	data->time_to_die = ft_atol(argv[2]);
 	data->time_to_eat = ft_atol(argv[3]);
 	data->time_to_sleep = ft_atol(argv[4]);

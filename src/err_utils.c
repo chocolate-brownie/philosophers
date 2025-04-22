@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/25 10:58:53 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/11 12:48:50 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:01:46 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,17 +19,21 @@ int	control_args(int argc, char *argv[])
 
 	if (argc > 6 || argc < 5)
 	{
-		write(ER, "The program should be executed as follows:\n", 43);
-		write(ER, "./philo nbr_of_philosophers time_to_die time_to_eat ", 52);
-		write(ER, "time_to_sleep [must_eat_count]\n", 31);
+		write(ER, "[ERROR]: Invalid arguments\n", 27);
 		return (1);
 	}
-	i = 0;
+	if (!ft_is_valid_int(argv[1], &val) || !is_valid_range(val, 1, UINT16_MAX))
+	{
+		write(ER, "[ERROR]: Invalid arguments\n", 27);
+		return (2);
+	}
+	i = 1;
 	while (++i < argc)
 	{
-		if (!ft_is_valid_int(argv[i], &val) || val < 1)
+		if (!ft_is_valid_int(argv[i], &val) || !is_valid_range(val, 1,
+				UINT32_MAX))
 		{
-			write(ER, "Wrong input. Must be positive integers\n", 39);
+			write(ER, "[ERROR]: Invalid arguments\n", 27);
 			return (2);
 		}
 	}

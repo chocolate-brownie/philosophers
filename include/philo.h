@@ -6,7 +6,7 @@
 /*   By: mgodawat <mgodawat@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 05:55:30 by mgodawat          #+#    #+#             */
-/*   Updated: 2025/04/11 12:57:39 by mgodawat         ###   ########.fr       */
+/*   Updated: 2025/04/11 14:01:03 by mgodawat         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 # define RESET "\x1b[0m"
 
 # define PHILO_MAX 200
+# define UINT16_MAX 65535
+# define UINT32_MAX 4294967295
 # define ER STDERR_FILENO
 # define DEBUG 0
 
@@ -83,6 +85,7 @@ typedef struct s_philo
 
 long				ft_atol(const char *str);
 int					ft_is_valid_int(const char *nptr, long *result);
+int					is_valid_range(long val, long min, long max);
 int					control_args(int argc, char *argv[]);
 void				turn_dead(t_data *data);
 void				ft_usleep(__uint32_t time, t_data *data);
